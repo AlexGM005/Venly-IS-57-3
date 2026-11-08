@@ -1,5 +1,41 @@
 {
-
-"Peliculas" = []
-
+  "Peliculas" : [ ],
+  "Perfiles" : [ {
+    "id" : 1,
+    "nombre" : "Ana Cliente",
+    "cedula" : "12345678",
+    "correo" : "ana@venly.com",
+    "telefono" : "04121234567",
+    "passwordHash" : "$2a$10$Aw1BgT6OMGhFAkadRGTESOoFVc0tLauFybf.4h.G.po0HJvlBrz6W",
+    "rol" : "CLIENTE"
+  }, {
+    "id" : 2,
+    "nombre" : "Gerente Uno",
+    "cedula" : "87654321",
+    "correo" : "gerente@venly.com",
+    "telefono" : "04129876543",
+    "passwordHash" : "$2a$10$t9o04GWk08zc0jSXiETZ7eLNGtaHHcTmkrZePaurzcbAoD7iy/DGy",
+    "rol" : "GERENTE"
+  } ],
+  "Salas" : [ {
+    "id" : 1,
+    "nombre" : "Sala 1",
+    "capacidad" : 120
+  }, {
+    "id" : 2,
+    "nombre" : "Sala 2",
+    "capacidad" : 120
+  }, {
+    "id" : 3,
+    "nombre" : "Sala 3",
+    "capacidad" : 120
+  }, {
+    "id" : 4,
+    "nombre" : "Sala 4",
+    "capacidad" : 120
+  }, {
+    "id" : 5,
+    "nombre" : "Sala 5",
+    "capacidad" : 120
+  } ]
 }
