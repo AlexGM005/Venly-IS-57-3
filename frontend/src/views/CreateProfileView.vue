@@ -48,7 +48,11 @@ function inputClass(field: FormField): string[] {
 function validateClient(): boolean {
   const errors: Partial<Record<FormField, string>> = {};
 
-  if (!form.nombre.trim()) errors.nombre = 'El nombre es obligatorio';
+  if (!form.nombre.trim()) {
+    errors.nombre = 'El nombre es obligatorio';
+  } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]+$/.test(form.nombre.trim())) {
+    errors.nombre = 'El nombre solo puede contener letras y espacios';
+  }
   if (!/^[0-9]{6,12}$/.test(form.cedula.trim())) errors.cedula = 'La cédula debe contener entre 6 y 12 dígitos';
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.correo.trim())) errors.correo = 'El correo no tiene un formato válido';
   if (!/^[0-9]{10,15}$/.test(form.telefono.trim())) errors.telefono = 'El teléfono debe contener entre 10 y 15 dígitos';
@@ -209,6 +213,7 @@ async function submitForm() {
             :class="inputClass('claveOrganizacion')"
           />
           <p class="venly-field-error">{{ fieldErrors.claveOrganizacion }}</p>
+          <p class="text-xs text-venly-gold/90">🔑 Clave de prueba: <code class="font-semibold">Venly2024</code></p>
         </div>
       </Transition>
 

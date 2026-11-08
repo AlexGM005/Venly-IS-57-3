@@ -10,6 +10,7 @@ public class CreateProfileRequest {
 
     @NotBlank(message = "El nombre es obligatorio")
     @Size(max = 120, message = "El nombre no puede exceder 120 caracteres")
+    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\\s]+$", message = "El nombre solo puede contener letras y espacios")
     private String nombre;
 
     @NotBlank(message = "La cédula es obligatoria")

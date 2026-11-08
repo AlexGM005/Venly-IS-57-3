@@ -6,6 +6,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class SecurityProperties {
 
     private String organizationKeyHash;
+    private String organizationKeyDefault;
+
+    public String getOrganizationKeyDefault() {
+        return organizationKeyDefault;
+    }
+
+    public void setOrganizationKeyDefault(String organizationKeyDefault) {
+        this.organizationKeyDefault = organizationKeyDefault;
+    }
 
     public String getOrganizationKeyHash() {
         return organizationKeyHash;

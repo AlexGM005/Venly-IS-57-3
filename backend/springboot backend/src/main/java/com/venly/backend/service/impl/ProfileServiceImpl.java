@@ -1,6 +1,6 @@
 package com.venly.backend.service.impl;
 
-import com.venly.backend.config.SecurityProperties;
+import com.venly.backend.config.OrganizationKeyProvider;
 import com.venly.backend.dto.CreateProfileRequest;
 import com.venly.backend.dto.ProfileResponse;
 import com.venly.backend.exception.BusinessException;
@@ -18,16 +18,16 @@ public class ProfileServiceImpl implements ProfileService {
 
     private final ProfileRepository profileRepository;
     private final PasswordEncoder passwordEncoder;
-    private final SecurityProperties securityProperties;
+    private final OrganizationKeyProvider organizationKeyProvider;
 
     public ProfileServiceImpl(
             ProfileRepository profileRepository,
             PasswordEncoder passwordEncoder,
-            SecurityProperties securityProperties
+            OrganizationKeyProvider organizationKeyProvider
     ) {
         this.profileRepository = profileRepository;
         this.passwordEncoder = passwordEncoder;
-        this.securityProperties = securityProperties;
+        this.organizationKeyProvider = organizationKeyProvider;
     }
 
     @Override
@@ -86,7 +86,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     private void validateOrganizationKey(String organizationKey) {
-        String hash = securityProperties.getOrganizationKeyHash();
+        String hash = organizationKeyProvider.getOrganizationKeyHash();
         if (hash == null || hash.isBlank()) {
             throw new BusinessException(HttpStatus.FORBIDDEN, "La clave de organización no está configurada");
         }

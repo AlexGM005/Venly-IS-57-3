@@ -9,4 +9,5 @@ venly:
   data:
     file: ../../data/Base.json
   security:
-    organization-key-hash: ${VENLY_ORG_KEY_HASH:$2b$12$cuUM9uFDKt9c4Bdt5G1dXe0iKfiJ6YOKLM3OFIPqb1E/rpFmTsGAG}
+    organization-key-hash: ${VENLY_ORG_KEY_HASH:}
+    organization-key-default: Venly2024
