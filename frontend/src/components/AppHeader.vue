@@ -1,12 +1,26 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useSession } from '@/composables/useSession';
 
+const router = useRouter();
+const { currentUser, isLoggedIn, logout } = useSession();
 const menuOpen = ref(false);
 
-const links = [
-  { to: '/crear-perfil', label: 'Crear perfil' },
-  { to: '/consultar-perfil', label: 'Mi perfil' }
-];
+const links = computed(() =>
+  isLoggedIn.value
+    ? [
+        { to: '/menu', label: 'Menú principal' },
+        { to: '/perfil', label: 'Perfil' }
+      ]
+    : [{ to: '/crear-perfil', label: 'Crear perfil' }]
+);
+
+function handleLogout() {
+  menuOpen.value = false;
+  logout();
+  router.push({ name: 'crear-perfil' });
+}
 </script>
 
 <template>
@@ -16,8 +30,8 @@ const links = [
     <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5">
       <RouterLink to="/" class="group flex items-center gap-2" @click="menuOpen = false">
         <span class="text-2xl transition-transform duration-300 group-hover:rotate-12">🎬</span>
-        <span class="text-2xl font-extrabold tracking-tight">
-          <span class="bg-gradient-to-r from-venly-gold to-amber-200 bg-clip-text text-transparent">Venly</span>
+        <span class="bg-gradient-to-r from-venly-gold to-amber-200 bg-clip-text text-2xl font-extrabold tracking-tight text-transparent">
+          Venly
         </span>
       </RouterLink>
 
@@ -31,6 +45,16 @@ const links = [
         >
           {{ link.label }}
         </RouterLink>
+        <template v-if="currentUser">
+          <span class="ml-3 border-l border-venly-border pl-4 text-sm text-venly-muted">{{ currentUser.nombre }}</span>
+          <button
+            type="button"
+            class="ml-2 rounded-md px-3 py-2 text-sm text-venly-muted hover:bg-venly-card hover:text-venly-accent"
+            @click="handleLogout"
+          >
+            Cerrar sesión
+          </button>
+        </template>
       </nav>
 
       <button
@@ -59,6 +83,14 @@ const links = [
         >
           {{ link.label }}
         </RouterLink>
+        <button
+          v-if="isLoggedIn"
+          type="button"
+          class="mt-2 block w-full rounded-md px-3 py-2 text-left text-sm text-venly-muted hover:bg-venly-card hover:text-venly-accent"
+          @click="handleLogout"
+        >
+          Cerrar sesión
+        </button>
       </nav>
     </Transition>
   </header>

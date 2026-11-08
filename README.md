@@ -45,15 +45,22 @@ venly/
 │   ├── postcss.config.cjs
 │   └── src/
 │       ├── assets/main.css
-│       ├── components/AppHeader.vue
+│       ├── components/
+│       │   ├── AppHeader.vue
+│       │   ├── DisabledActionButton.vue
+│       │   └── ProfileCard.vue
+│       ├── composables/useSession.ts
 │       ├── router/index.ts
 │       ├── services/
 │       │   ├── httpClient.ts
 │       │   └── profileService.ts
 │       ├── types/profile.ts
 │       ├── views/
-│       │   ├── ConsultProfileView.vue
-│       │   └── CreateProfileView.vue
+│       │   ├── ClientProfileView.vue
+│       │   ├── CreateProfileView.vue
+│       │   ├── MainMenuView.vue
+│       │   ├── ProfileView.vue
+│       │   └── StaffProfileView.vue
 │       ├── App.vue
 │       └── main.ts
 └── data/
@@ -99,7 +106,10 @@ El backend escribe el archivo de forma segura con reemplazo atómico para reduci
 ### Endpoints
 
 - `POST /api/perfiles` → crea perfil.
-- `GET /api/perfiles/{id}` → consulta perfil propio, validando cabecera `X-Perfil-Id`.
+- `GET /api/perfiles/{id}` → consulta un perfil; la cabecera `X-Perfil-Id` identifica al solicitante:
+  - `CLIENTE`: sólo su propio perfil (otro id → `403`).
+  - `GERENTE` / `JEFE`: cualquier perfil.
+  - Solicitante inexistente → `401`; perfil inexistente → `404`.
 - `GET /api/perfiles` → listado de perfiles, sólo permitido para rol `JEFE` (identificado por `X-Perfil-Id`).
 
 ### Errores JSON consistentes
@@ -125,10 +135,13 @@ Respuestas con estructura:
   - validación cliente alineada con servidor;
   - estados de carga, éxito y error en español;
   - consumo de API mediante cliente HTTP tipado.
-- Vista **Consultar Perfil** (`/consultar-perfil`) con:
-  - uso de `X-Perfil-Id`;
-  - render de datos del perfil;
-  - botón **Editar Perfil** visible pero sin acción (deshabilitado).
+  - al crear el perfil se **inicia sesión automáticamente** y se redirige al menú principal.
+- **Menú principal** (`/menu`, requiere sesión) con la sección **Perfil → Consultar perfil**.
+- Vista **Perfil** (`/perfil`, requiere sesión), según el rol de la sesión:
+  - `CLIENTE`: "Mi perfil", sólo sus propios datos y botón **Modificar perfil** visible pero deshabilitado.
+  - `GERENTE` / `JEFE`: búsqueda de cualquier perfil por ID y botón **Editar perfil** deshabilitado.
+- Sesión simple en `composables/useSession.ts` (id guardado en `localStorage`); "Cerrar sesión" vuelve a `/crear-perfil`.
+- Sin sesión, `/menu` y `/perfil` redirigen a `/crear-perfil`.
 
 ## 6) CORS
 
@@ -141,7 +154,7 @@ Habilitado en backend para `http://localhost:5173` sobre rutas `/api/**`.
 - `venly.data.file`: ruta del JSON (`../../data/Base.json`).
 - `venly.security.organization-key-hash`: hash BCrypt de clave organizacional, configurable vía variable de entorno `VENLY_ORG_KEY_HASH`.
 
-Clave de referencia usada para pruebas locales: `CLAVE_ORG_VENLY` (no persistida en texto plano, sólo su hash).
+Clave de referencia usada para pruebas locales: `Venly2024` (no persistida en texto plano, sólo su hash).
 
 ## 8) Arranque en localhost
 

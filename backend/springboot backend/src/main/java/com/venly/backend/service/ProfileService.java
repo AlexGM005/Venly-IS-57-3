@@ -10,7 +10,8 @@ public interface ProfileService {
 
     ProfileResponse getProfileById(Long id);
 
-    ProfileResponse getOwnProfile(Long pathId, Long requesterId);
+    /** CLIENTE may only read its own profile; GERENTE and JEFE may read any profile. */
+    ProfileResponse getProfile(Long pathId, Long requesterId);
 
     List<ProfileResponse> getProfilesForChief(Long requesterId);
 }

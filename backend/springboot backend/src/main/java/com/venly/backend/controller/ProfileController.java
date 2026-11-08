@@ -32,11 +32,11 @@ public class ProfileController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProfileResponse> getOwnProfile(
+    public ResponseEntity<ProfileResponse> getProfile(
             @PathVariable Long id,
             @RequestHeader("X-Perfil-Id") Long requesterId
     ) {
-        return ResponseEntity.ok(profileService.getOwnProfile(id, requesterId));
+        return ResponseEntity.ok(profileService.getProfile(id, requesterId));
     }
 
     @GetMapping

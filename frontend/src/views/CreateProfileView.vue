@@ -3,7 +3,8 @@ import { computed, reactive, ref, watch } from 'vue';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { createProfile } from '@/services/profileService';
 import { HttpError } from '@/services/httpClient';
-import { saveSessionProfileId } from '@/utils/session';
+import { useRouter } from 'vue-router';
+import { useSession } from '@/composables/useSession';
 import type { CreateProfilePayload, Profile, Role } from '@/types/profile';
 
 type FormField = keyof CreateProfilePayload;
@@ -25,6 +26,10 @@ const roleOptions: { value: Role; label: string; description: string }[] = [
 ];
 
 const loading = ref(false);
+const router = useRouter();
+const { login } = useSession();
+const REDIRECT_DELAY_MS = 1200;
+
 const createdProfile = ref<Profile | null>(null);
 const globalError = ref('');
 const fieldErrors = ref<Partial<Record<FormField, string>>>({});
@@ -92,10 +97,12 @@ async function submitForm() {
       ...form,
       claveOrganizacion: needsOrganizationKey.value ? form.claveOrganizacion?.trim() : undefined
     });
-    saveSessionProfileId(profile.id);
+    login(profile);
     createdProfile.value = profile;
     fieldErrors.value = {};
     resetForm();
+    // Short pause so the success animation is visible before entering the main menu.
+    setTimeout(() => router.push({ name: 'menu' }), REDIRECT_DELAY_MS);
   } catch (error) {
     if (error instanceof HttpError) {
       globalError.value = error.payload?.mensaje ?? 'No se pudo crear el perfil.';
@@ -131,15 +138,10 @@ async function submitForm() {
         <div class="flex-1">
           <p class="font-semibold text-emerald-300">¡Perfil creado exitosamente!</p>
           <p class="text-sm text-venly-muted">
-            Bienvenido, {{ createdProfile.nombre }}. Tu ID de perfil es <strong class="text-venly-text">#{{ createdProfile.id }}</strong>.
+            Bienvenido, {{ createdProfile.nombre }}. Tu ID de perfil es <strong class="text-venly-text">#{{ createdProfile.id }}</strong>. Entrando a tu menú…
           </p>
         </div>
-        <RouterLink
-          to="/consultar-perfil"
-          class="rounded-lg border border-emerald-400/50 px-4 py-2 text-sm font-medium text-emerald-200 hover:bg-emerald-500/20"
-        >
-          Ver mi perfil →
-        </RouterLink>
+        <LoadingSpinner class="text-emerald-300" />
       </div>
     </Transition>
 
@@ -218,7 +220,7 @@ async function submitForm() {
       </Transition>
 
       <div class="mt-4 md:col-span-2">
-        <button type="submit" :disabled="loading" class="venly-btn-primary w-full sm:w-auto">
+        <button type="submit" :disabled="loading || createdProfile !== null" class="venly-btn-primary w-full sm:w-auto">
           <LoadingSpinner v-if="loading" />
           {{ loading ? 'Creando perfil...' : 'Crear perfil' }}
         </button>

@@ -66,23 +66,29 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public ProfileResponse getOwnProfile(Long pathId, Long requesterId) {
-        if (!pathId.equals(requesterId)) {
-            throw new BusinessException(HttpStatus.FORBIDDEN, "No tiene permisos para consultar este perfil");
+    public ProfileResponse getProfile(Long pathId, Long requesterId) {
+        Profile requester = findRequester(requesterId);
+        boolean isStaff = requester.getRol() == Role.GERENTE || requester.getRol() == Role.JEFE;
+        if (!isStaff && !pathId.equals(requesterId)) {
+            throw new BusinessException(HttpStatus.FORBIDDEN, "Un cliente solo puede consultar su propio perfil");
         }
         return getProfileById(pathId);
     }
 
     @Override
     public List<ProfileResponse> getProfilesForChief(Long requesterId) {
-        Profile requester = profileRepository.findById(requesterId)
-                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Perfil solicitante no encontrado"));
+        Profile requester = findRequester(requesterId);
 
         if (requester.getRol() != Role.JEFE) {
             throw new BusinessException(HttpStatus.FORBIDDEN, "Solo un jefe puede consultar el listado de perfiles");
         }
 
         return profileRepository.findAll().stream().map(this::toResponse).toList();
+    }
+
+    private Profile findRequester(Long requesterId) {
+        return profileRepository.findById(requesterId)
+                .orElseThrow(() -> new BusinessException(HttpStatus.UNAUTHORIZED, "La sesión no corresponde a un perfil existente"));
     }
 
     private void validateOrganizationKey(String organizationKey) {
