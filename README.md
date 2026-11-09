@@ -1,160 +1,134 @@
 # Venly IS-57-3 · Release 1
 
-Proyecto académico **Venly v2.0** con arquitectura separada en frontend, backend y data.
+Proyecto académico **Venly v2.0**: aplicación de cine con frontend (Vue 3) y backend (Spring Boot) separados, y persistencia en un archivo JSON local.
 
-## 1) Estructura del proyecto
+Release 1 cubre 4 historias de usuario:
+
+| HU | Descripción |
+|----|-------------|
+| HU1 | Autenticación: registro (Cliente / Gerente / Jefe) e inicio de sesión |
+| HU2 | Menú principal según rol, cabecera con sesión y cierre de sesión |
+| HU3 | Perfiles: consultar y editar el propio perfil; directorio de perfiles para Gerente/Jefe |
+| HU4 | Películas: catálogo para todos; alta y edición (con póster) para Gerente/Jefe |
+
+## 1) Stack
+
+- **Frontend:** Vue 3 + Vite + TypeScript (`<script setup>`), Vue Router, Tailwind CSS + `@tailwindcss/forms`, `fetch` tipado.
+- **Backend:** Java 21 + Spring Boot 4.1.2 (MVC REST), Bean Validation, `spring-security-crypto` (solo BCrypt).
+- **Persistencia:** `data/Base.json` con Jackson. Sin bases de datos externas.
+
+## 2) Estructura
 
 ```text
 venly/
-├── backend/
-│   └── springboot backend/
-│       ├── pom.xml
-│       ├── mvnw
-│       ├── src/
-│       │   ├── main/
-│       │   │   ├── java/com/venly/backend/
-│       │   │   │   ├── VenlyApplication.java
-│       │   │   │   ├── config/
-│       │   │   │   │   ├── AppConfig.java
-│       │   │   │   │   └── SecurityProperties.java
-│       │   │   │   ├── controller/
-│       │   │   │   │   └── ProfileController.java
-│       │   │   │   ├── dto/
-│       │   │   │   │   ├── ApiErrorResponse.java
-│       │   │   │   │   ├── CreateProfileRequest.java
-│       │   │   │   │   └── ProfileResponse.java
-│       │   │   │   ├── exception/
-│       │   │   │   │   ├── BusinessException.java
-│       │   │   │   │   └── GlobalExceptionHandler.java
-│       │   │   │   ├── model/
-│       │   │   │   │   ├── Profile.java
-│       │   │   │   │   ├── Role.java
-│       │   │   │   │   └── Room.java
-│       │   │   │   ├── repository/
-│       │   │   │   │   ├── JsonProfileRepository.java
-│       │   │   │   │   └── ProfileRepository.java
-│       │   │   │   └── service/
-│       │   │   │       ├── ProfileService.java
-│       │   │   │       └── impl/ProfileServiceImpl.java
-│       │   │   └── resources/
-│       │   │       └── application.yml
-│       │   └── test/java/com/venly/backend/VenlyApplicationTests.java
-├── frontend/
-│   ├── package.json
-│   ├── tailwind.config.cjs
-│   ├── postcss.config.cjs
-│   └── src/
-│       ├── assets/main.css
-│       ├── components/
-│       │   ├── AppHeader.vue
-│       │   ├── DisabledActionButton.vue
-│       │   └── ProfileCard.vue
-│       ├── composables/useSession.ts
-│       ├── router/index.ts
-│       ├── services/
-│       │   ├── httpClient.ts
-│       │   └── profileService.ts
-│       ├── types/profile.ts
-│       ├── views/
-│       │   ├── ClientProfileView.vue
-│       │   ├── CreateProfileView.vue
-│       │   ├── MainMenuView.vue
-│       │   ├── ProfileView.vue
-│       │   └── StaffProfileView.vue
-│       ├── App.vue
-│       └── main.ts
-└── data/
-    └── Base.json
+├── data/Base.json
+├── backend/springboot backend/src/main/java/com/venly/backend/
+│   ├── VenlyApplication.java
+│   ├── config/        AppConfig (CORS) · SecurityProperties · OrganizationKeyProvider
+│   ├── controller/    AuthController · ProfileController · MovieController
+│   ├── service/       AuthService · ProfileService · MovieService (interfaces)
+│   │   └── impl/      AuthServiceImpl · ProfileServiceImpl · MovieServiceImpl
+│   │                  ProfileMapper · RequesterResolver (resolución de sesión y permisos)
+│   ├── repository/    JsonDataStore (lectura/escritura atómica con ReentrantLock)
+│   │                  ProfileRepository → JsonProfileRepository
+│   │                  MovieRepository   → JsonMovieRepository
+│   │                  RoomRepository    → JsonRoomRepository
+│   ├── model/         Profile · Role · Movie · Room
+│   ├── dto/           CreateProfileRequest · UpdateProfileRequest · LoginRequest · ProfileResponse
+│   │                  CreateMovieRequest · UpdateMovieRequest · MovieResponse
+│   │                  ApiErrorResponse · ValidationPatterns
+│   └── exception/     BusinessException · GlobalExceptionHandler
+└── frontend/src/
+    ├── App.vue · main.ts · assets/main.css
+    ├── composables/useSession.ts
+    ├── types/         profile.ts · movie.ts
+    ├── services/      httpClient.ts · authService.ts · profileService.ts · movieService.ts
+    ├── utils/         validators.ts
+    ├── components/    AppHeader · LoadingSpinner · ProfileCard · RoleBadge · BaseModal · MovieCard
+    ├── router/index.ts
+    └── views/         LoginView · MainMenuView · MyProfileView · ProfileDirectoryView
+                       MovieCatalogView · MovieDetailView · MovieFormView
 ```
 
-## 2) Stack técnico aplicado
+### Arquitectura en capas
 
-- **Frontend:** Vue 3 + Vite + TypeScript + Vue Router + Tailwind CSS.
-- **Backend:** Java 21 + Spring Boot 4.1.2 (MVC REST).
-- **Persistencia:** archivo local `data/Base.json` con Jackson (sin base de datos externa).
+- **Controller:** solo recibe la petición HTTP y delega en el Service.
+- **Service (interfaz + impl):** toda la lógica de negocio, validaciones y reglas de rol.
+- **Repository (interfaz + impl):** abstrae la persistencia; los repositorios delegan en `JsonDataStore`.
+- **JsonDataStore:** acceso concurrente seguro con `ReentrantLock` y escritura atómica (archivo temporal + `ATOMIC_MOVE`).
 
-> Nota de versión de Spring Boot: en este entorno **sí resolvió correctamente `4.1.2`** en Maven, por lo que se mantuvo la versión solicitada.
-
-## 3) Configuración de datos
-
-Archivo: `data/Base.json`
-
-Incluye las tres colecciones:
-
-- `Peliculas`: arreglo inicial vacío.
-- `Perfiles`: arreglo inicial vacío.
-- `Salas`: 5 salas por defecto (`Sala 1` a `Sala 5`) con `id`, `nombre` y `capacidad`.
-
-El backend escribe el archivo de forma segura con reemplazo atómico para reducir riesgo de corrupción.
-
-## 4) Flujo de perfiles implementado
-
-### Reglas de negocio
-
-- Validaciones de servidor (Bean Validation):
-  - `nombre` obligatorio.
-  - `cédula` obligatoria (6 a 12 dígitos).
-  - `correo` obligatorio y formato válido.
-  - `teléfono` obligatorio (10 a 15 dígitos).
-  - `contraseña` obligatoria, mínimo 6 caracteres, con letras y números.
-- Roles permitidos: `CLIENTE`, `GERENTE`, `JEFE`.
-- Si el rol es `GERENTE` o `JEFE`, se exige clave de organización.
-- La clave de organización se valida contra hash BCrypt configurado.
-- La contraseña del perfil **siempre** se persiste hasheada con BCrypt.
-- Se rechazan duplicados por correo y cédula (`409 Conflict`).
-
-### Endpoints
-
-- `POST /api/perfiles` → crea perfil.
-- `GET /api/perfiles/{id}` → consulta un perfil; la cabecera `X-Perfil-Id` identifica al solicitante:
-  - `CLIENTE`: sólo su propio perfil (otro id → `403`).
-  - `GERENTE` / `JEFE`: cualquier perfil.
-  - Solicitante inexistente → `401`; perfil inexistente → `404`.
-- `GET /api/perfiles` → listado de perfiles, sólo permitido para rol `JEFE` (identificado por `X-Perfil-Id`).
-
-### Errores JSON consistentes
-
-Respuestas con estructura:
+## 3) Datos (`data/Base.json`)
 
 ```json
 {
-  "codigo": 400,
-  "mensaje": "Error de validación",
-  "errores": {
-    "campo": "mensaje"
-  }
+  "Peliculas": [],
+  "Perfiles": [],
+  "Salas": [ { "id": 1, "nombre": "Sala 1", "capacidad": 120 }, "… hasta Sala 5" ]
 }
 ```
 
-## 5) Frontend implementado
+Si `Salas` está vacío al arrancar, el backend crea las 5 salas por defecto.
 
-- Vista **Crear Perfil** (`/crear-perfil`) con:
-  - formulario tipado con `<script setup lang="ts">`;
-  - selector de rol;
-  - campo de clave de organización condicional (`GERENTE`/`JEFE`);
-  - validación cliente alineada con servidor;
-  - estados de carga, éxito y error en español;
-  - consumo de API mediante cliente HTTP tipado.
-  - al crear el perfil se **inicia sesión automáticamente** y se redirige al menú principal.
-- **Menú principal** (`/menu`, requiere sesión) con la sección **Perfil → Consultar perfil**.
-- Vista **Perfil** (`/perfil`, requiere sesión), según el rol de la sesión:
-  - `CLIENTE`: "Mi perfil", sólo sus propios datos y botón **Modificar perfil** visible pero deshabilitado.
-  - `GERENTE` / `JEFE`: búsqueda de cualquier perfil por ID y botón **Editar perfil** deshabilitado.
-- Sesión simple en `composables/useSession.ts` (id guardado en `localStorage`); "Cerrar sesión" vuelve a `/crear-perfil`.
-- Sin sesión, `/menu` y `/perfil` redirigen a `/crear-perfil`.
+## 4) Sesión simulada
 
-## 6) CORS
+- No hay JWT. Un login o registro correcto devuelve el perfil completo, sin el hash de contraseña.
+- El frontend guarda el perfil en `localStorage` (`venly.session`) y envía la cabecera **`X-Perfil-Id`** en cada petición.
+- Si la cabecera falta → `401`. Si el perfil de la cabecera no existe → `401`, y el frontend cierra la sesión.
 
-Habilitado en backend para `http://localhost:5173` sobre rutas `/api/**`.
+## 5) Clave de organización (Gerente / Jefe)
 
-## 7) Variables y seguridad
+- Es una sola clave compartida. Valor de prueba: **`Venly2024`** (`venly.security.organization-key-default` en `application.yml`).
+- `OrganizationKeyProvider` calcula su hash BCrypt **una sola vez** al arrancar. Si existe la variable de entorno `VENLY_ORG_KEY_HASH`, usa ese hash en su lugar.
+- En el registro, al elegir Gerente o Jefe aparece el campo de la clave con la pista "🔑 Clave de prueba: Venly2024".
 
-`application.yml` incluye:
+## 6) API REST
 
-- `venly.data.file`: ruta del JSON (`../../data/Base.json`).
-- `venly.security.organization-key-hash`: hash BCrypt de clave organizacional, configurable vía variable de entorno `VENLY_ORG_KEY_HASH`.
+| Método | Ruta | Acceso | Descripción |
+|--------|------|--------|-------------|
+| POST | `/api/auth/register` | Público | Registro. `CLIENTE` por defecto; `GERENTE`/`JEFE` requieren `claveOrganizacion` (incorrecta → 403). Correo o cédula duplicados → 409 |
+| POST | `/api/auth/login` | Público | `correo` + `contrasena`. Credenciales inválidas → 401 |
+| GET | `/api/perfiles/me` | Sesión | Perfil propio |
+| PUT | `/api/perfiles/me` | Sesión | Edita solo `nombre`, `telefono` y `correo` (correo único → 409) |
+| GET | `/api/perfiles` | Gerente/Jefe | Listado de perfiles (Cliente → 403) |
+| GET | `/api/perfiles/{id}` | Gerente/Jefe o el propio | Detalle de perfil |
+| GET | `/api/peliculas` | Todos | Catálogo |
+| GET | `/api/peliculas/{id}` | Todos | Detalle (inexistente → 404) |
+| GET | `/api/peliculas/salas` | Todos | Las 5 salas |
+| POST | `/api/peliculas` | Gerente/Jefe | Crear película (Cliente → 403) |
+| PUT | `/api/peliculas/{id}` | Gerente/Jefe | Editar película (`quitarImagen: true` elimina el póster) |
 
-Clave de referencia usada para pruebas locales: `Venly2024` (no persistida en texto plano, sólo su hash).
+### Reglas de validación (mensajes en español)
+
+- **Nombre:** solo letras y espacios.
+- **Cédula:** 6 a 12 dígitos.
+- **Teléfono:** 10 a 15 dígitos.
+- **Contraseña:** mínimo 6 caracteres, con letras y números. Se guarda como hash BCrypt.
+- **Película:**
+  - `titulo`, `sinopsis`, `clasificacion` (G, PG, PG-13, R, NC-17) son obligatorios.
+  - `horario` tiene el formato `HH:mm - HH:mm`, y el inicio debe ser distinto del fin.
+  - `duracion` admite `2h 30min`, `2h` o `90min`.
+  - `salaId` debe existir.
+  - Imagen opcional, solo **JPG/PNG** (se verifican los bytes reales), máximo **10 MB**, en Base64 (se acepta prefijo `data:`).
+
+### Formato de error
+
+```json
+{ "codigo": 400, "mensaje": "Error de validación", "errores": { "campo": "mensaje" } }
+```
+
+## 7) Rutas del frontend
+
+| Ruta | Acceso |
+|------|--------|
+| `/login` | Solo sin sesión (pestañas "Iniciar Sesión" / "Registrarse") |
+| `/menu` | Sesión. Cliente: Mi Perfil + Catálogo · Gerente/Jefe: Gestión de Perfiles + Gestión de Películas |
+| `/perfil` | Sesión: tarjeta de perfil + modal "Editar Perfil" |
+| `/perfiles` | Gerente/Jefe: tabla con búsqueda por nombre o cédula y detalle |
+| `/peliculas` | Sesión: catálogo en tarjetas (Gerente/Jefe ven "Añadir película" y "Editar") |
+| `/peliculas/:id` | Sesión: detalle |
+| `/peliculas/nueva`, `/peliculas/:id/editar` | Gerente/Jefe: formulario con vista previa del póster y selector de sala |
+
+Sin sesión, cualquier ruta protegida redirige a `/login`. Con sesión, `/login` redirige a `/menu`.
 
 ## 8) Arranque en localhost
 
@@ -174,4 +148,4 @@ npm install
 npm run dev
 ```
 
-Con esto, el frontend consume el backend en localhost sin bloqueos de CORS.
+Vite redirige `/api` → `http://localhost:8080`. El backend además permite CORS para `http://localhost:5173`.

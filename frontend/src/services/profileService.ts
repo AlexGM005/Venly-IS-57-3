@@ -1,18 +1,18 @@
-import type { CreateProfilePayload, Profile } from '@/types/profile';
+import type { Profile, UpdateProfilePayload } from '@/types/profile';
 import { request } from './httpClient';
 
-export function createProfile(payload: CreateProfilePayload): Promise<Profile> {
-  return request<Profile>('/perfiles', {
-    method: 'POST',
-    body: JSON.stringify(payload)
-  });
+export function getMyProfile(): Promise<Profile> {
+  return request<Profile>('/perfiles/me');
 }
 
-export function getProfileById(profileId: number, requesterId: number): Promise<Profile> {
-  return request<Profile>(`/perfiles/${profileId}`, {
-    method: 'GET',
-    headers: {
-      'X-Perfil-Id': String(requesterId)
-    }
-  });
+export function updateMyProfile(payload: UpdateProfilePayload): Promise<Profile> {
+  return request<Profile>('/perfiles/me', { method: 'PUT', body: payload });
+}
+
+export function getAllProfiles(): Promise<Profile[]> {
+  return request<Profile[]>('/perfiles');
+}
+
+export function getProfileById(id: number): Promise<Profile> {
+  return request<Profile>(`/perfiles/${id}`);
 }

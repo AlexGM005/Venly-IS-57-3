@@ -1,49 +1,84 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import RoleBadge from '@/components/RoleBadge.vue';
 import { useSession } from '@/composables/useSession';
 
-const { currentUser, isStaff } = useSession();
+const { currentUser, firstName, isStaff } = useSession();
 
-const firstName = computed(() => currentUser.value?.nombre.trim().split(/\s+/)[0] ?? '');
+interface MenuOption {
+  to: string;
+  title: string;
+  description: string;
+  icon: string;
+  accent: string;
+}
 
-const profileOptions = computed(() => [
-  {
-    to: '/perfil',
-    icon: isStaff.value ? '🔎' : '👤',
-    title: 'Consultar perfil',
-    description: isStaff.value
-      ? 'Consulta tu perfil o el de cualquier usuario por su ID.'
-      : 'Revisa los datos de tu cuenta.'
-  }
-]);
+const options = computed<MenuOption[]>(() =>
+  isStaff.value
+    ? [
+        {
+          to: '/perfiles',
+          title: 'Gestión de Perfiles',
+          description: 'Directorio de todos los perfiles registrados, con búsqueda por nombre o cédula.',
+          icon: '👥',
+          accent: 'from-venly-gold/30'
+        },
+        {
+          to: '/peliculas',
+          title: 'Gestión de Películas',
+          description: 'Añade nuevas películas a la cartelera y edita las existentes.',
+          icon: '🎞️',
+          accent: 'from-venly-accent/30'
+        }
+      ]
+    : [
+        {
+          to: '/perfil',
+          title: 'Mi Perfil',
+          description: 'Consulta tus datos y actualiza tu nombre, correo o teléfono.',
+          icon: '👤',
+          accent: 'from-sky-500/30'
+        },
+        {
+          to: '/peliculas',
+          title: 'Catálogo de Películas',
+          description: 'Explora la cartelera con horarios, duración, clasificación y sala.',
+          icon: '🍿',
+          accent: 'from-venly-accent/30'
+        }
+      ]
+);
 </script>
 
 <template>
-  <section class="mx-auto max-w-5xl animate-fade-up">
+  <section v-if="currentUser" class="mx-auto max-w-5xl animate-fade-up">
     <header class="mb-10">
       <p class="mb-2 text-xs font-semibold uppercase tracking-[0.3em] text-venly-gold">Menú principal</p>
       <h1 class="text-3xl font-extrabold sm:text-4xl">¡Hola, {{ firstName }}! 🍿</h1>
-      <p class="mt-2 text-venly-muted">¿Qué quieres hacer hoy?</p>
+      <p class="mt-2 flex flex-wrap items-center gap-2 text-venly-muted">
+        Has iniciado sesión como <RoleBadge :role="currentUser.rol" />
+      </p>
     </header>
 
-    <div class="venly-card p-6 sm:p-8">
-      <h2 class="mb-5 flex items-center gap-2 text-lg font-bold">
-        <span class="h-5 w-1 rounded-full bg-venly-accent"></span>
-        Perfil
-      </h2>
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <RouterLink
-          v-for="option in profileOptions"
-          :key="option.to"
-          :to="option.to"
-          class="group rounded-xl border border-venly-border bg-venly-bg/50 p-5 hover:-translate-y-1 hover:border-venly-accent/70 hover:shadow-glow focus:outline-none focus:ring-2 focus:ring-venly-accent/50"
-        >
-          <span class="text-3xl">{{ option.icon }}</span>
-          <h3 class="mt-3 font-semibold group-hover:text-white">{{ option.title }}</h3>
-          <p class="mt-1 text-sm text-venly-muted">{{ option.description }}</p>
-          <span class="mt-4 inline-block text-sm font-medium text-venly-accent">Entrar →</span>
-        </RouterLink>
-      </div>
+    <div class="grid gap-6 sm:grid-cols-2">
+      <RouterLink
+        v-for="option in options"
+        :key="option.to"
+        :to="option.to"
+        class="group venly-card relative overflow-hidden p-7 hover:-translate-y-1 hover:border-venly-accent/60 hover:shadow-glow focus:outline-none focus:ring-2 focus:ring-venly-accent/60"
+      >
+        <div class="pointer-events-none absolute inset-0 bg-gradient-to-br to-transparent opacity-60 transition-opacity group-hover:opacity-100" :class="option.accent"></div>
+        <div class="relative">
+          <span class="flex h-14 w-14 items-center justify-center rounded-2xl bg-venly-bg/70 text-3xl ring-1 ring-venly-border transition-transform duration-300 group-hover:scale-110">
+            {{ option.icon }}
+          </span>
+          <h2 class="mt-5 text-xl font-bold">{{ option.title }}</h2>
+          <p class="mt-2 text-sm text-venly-muted">{{ option.description }}</p>
+          <span class="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-venly-accent">
+            Entrar <span class="transition-transform group-hover:translate-x-1">→</span>
+          </span>
+        </div>
+      </RouterLink>
     </div>
   </section>
 </template>

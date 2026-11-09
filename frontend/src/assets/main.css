@@ -20,7 +20,8 @@
   a,
   button,
   input,
-  select {
+  select,
+  textarea {
     @apply transition-all duration-200 ease-out;
   }
 }
@@ -47,6 +48,20 @@
     @apply mt-1 min-h-[1.25rem] text-xs text-red-400;
   }
 
+  .venly-btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-venly-border bg-venly-bg/60 px-5 py-2.5
+      font-medium text-venly-text hover:border-venly-accent hover:text-venly-accent focus:outline-none
+      focus:ring-2 focus:ring-venly-accent/50 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .venly-alert-error {
+    @apply rounded-xl border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-300;
+  }
+
+  .venly-alert-success {
+    @apply rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-4 text-sm text-emerald-300;
+  }
+
   .venly-btn-primary {
     @apply inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-venly-accent to-rose-700
       px-5 py-2.5 font-semibold text-white shadow-glow hover:-translate-y-0.5 hover:brightness-110
@@ -69,7 +84,7 @@
 }
 .expand-enter-to,
 .expand-leave-from {
-  max-height: 140px;
+  max-height: 400px;
   opacity: 1;
 }
 
@@ -94,4 +109,34 @@
 .page-leave-to {
   opacity: 0;
   transform: translateY(-6px);
+}
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.25s ease;
+}
+.modal-enter-active .modal-panel,
+.modal-leave-active .modal-panel {
+  transition: transform 0.25s ease;
+}
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+.modal-enter-from .modal-panel,
+.modal-leave-to .modal-panel {
+  transform: translateY(24px) scale(0.98);
+}
+
+.tab-enter-active,
+.tab-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.tab-enter-from {
+  opacity: 0;
+  transform: translateX(12px);
+}
+.tab-leave-to {
+  opacity: 0;
+  transform: translateX(-12px);
 }

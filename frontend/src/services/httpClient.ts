@@ -1,6 +1,8 @@
+import { getSessionProfileId } from '@/composables/useSession';
 import type { ApiErrorResponse } from '@/types/profile';
 
 const API_BASE_URL = '/api';
+const SESSION_HEADER = 'X-Perfil-Id';
 
 export class HttpError extends Error {
   status: number;
@@ -14,18 +16,39 @@ export class HttpError extends Error {
   }
 }
 
-interface RequestOptions extends RequestInit {
-  headers?: Record<string, string>;
+type UnauthorizedHandler = () => void;
+let unauthorizedHandler: UnauthorizedHandler | null = null;
+
+/** Called when a request sent with a session gets 401 (e.g. the stored profile no longer exists). */
+export function onSessionRejected(handler: UnauthorizedHandler) {
+  unauthorizedHandler = handler;
+}
+
+interface RequestOptions {
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  body?: unknown;
+  /** Send the X-Perfil-Id header of the current session (default true). */
+  withSession?: boolean;
 }
 
 export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(options.headers ?? {})
-    }
-  });
+  const { method = 'GET', body, withSession = true } = options;
+  const headers: Record<string, string> = { Accept: 'application/json' };
+  if (body !== undefined) headers['Content-Type'] = 'application/json';
+
+  const sessionId = withSession ? getSessionProfileId() : null;
+  if (sessionId !== null) headers[SESSION_HEADER] = String(sessionId);
+
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      method,
+      headers,
+      body: body === undefined ? undefined : JSON.stringify(body)
+    });
+  } catch {
+    throw new HttpError(0, 'No se pudo conectar con el servidor. Verifique que el backend esté activo.');
+  }
 
   if (!response.ok) {
     let payload: ApiErrorResponse | undefined;
@@ -34,12 +57,18 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     } catch {
       payload = undefined;
     }
-    throw new HttpError(response.status, payload?.mensaje ?? 'Error inesperado', payload);
+    if (response.status === 401 && sessionId !== null) unauthorizedHandler?.();
+    throw new HttpError(response.status, payload?.mensaje ?? `Error inesperado (${response.status})`, payload);
   }
 
-  if (response.status === 204) {
-    return undefined as T;
-  }
-
+  if (response.status === 204) return undefined as T;
   return (await response.json()) as T;
+}
+
+/** Extracts a user-facing message and per-field errors from any thrown error. */
+export function parseApiError(error: unknown, fallback: string): { message: string; fields: Record<string, string> } {
+  if (error instanceof HttpError) {
+    return { message: error.payload?.mensaje ?? error.message ?? fallback, fields: error.payload?.errores ?? {} };
+  }
+  return { message: fallback, fields: {} };
 }
