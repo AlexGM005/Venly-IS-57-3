@@ -13,7 +13,9 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -101,6 +103,35 @@ public class JsonDataStore {
         } finally {
             lock.unlock();
         }
+    }
+
+    /** Appends {@code item} to the collection, assigning the next incremental id atomically. */
+    public <T> T insert(String key, TypeReference<List<T>> type, T item,
+                        Function<T, Long> idGetter, BiConsumer<T, Long> idSetter) {
+        return updateCollection(key, type, items -> {
+            long nextId = items.stream()
+                    .map(idGetter)
+                    .filter(Objects::nonNull)
+                    .max(Long::compareTo)
+                    .orElse(0L) + 1;
+            idSetter.accept(item, nextId);
+            items.add(item);
+            return item;
+        });
+    }
+
+    /** Replaces the element with the same id; throws if it does not exist. */
+    public <T> T replace(String key, TypeReference<List<T>> type, T item, Function<T, Long> idGetter) {
+        Long id = idGetter.apply(item);
+        return updateCollection(key, type, items -> {
+            for (int i = 0; i < items.size(); i++) {
+                if (Objects.equals(idGetter.apply(items.get(i)), id)) {
+                    items.set(i, item);
+                    return item;
+                }
+            }
+            throw new IllegalStateException("No existe el elemento " + id + " en la colección " + key);
+        });
     }
 
     private <T> List<T> readCollection(ObjectNode root, String key, TypeReference<List<T>> type) {
