@@ -1,35 +1,97 @@
-@import './base.css';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
+@layer base {
+  html {
+    color-scheme: dark;
   }
-}
 
-@media (min-width: 1024px) {
   body {
-    display: flex;
-    place-items: center;
+    @apply min-h-screen bg-venly-bg font-sans text-venly-text antialiased;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(233, 69, 96, 0.12), transparent),
+      radial-gradient(ellipse 60% 40% at 100% 100%, rgba(212, 168, 67, 0.06), transparent);
+    background-attachment: fixed;
   }
 
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+  a,
+  button,
+  input,
+  select {
+    @apply transition-all duration-200 ease-out;
   }
+}
+
+@layer components {
+  .venly-card {
+    @apply rounded-2xl border border-venly-border bg-venly-surface/80 shadow-card backdrop-blur;
+  }
+
+  .venly-label {
+    @apply mb-1.5 block text-sm font-medium text-venly-muted;
+  }
+
+  .venly-input {
+    @apply w-full rounded-lg border border-venly-border bg-venly-bg/70 px-3.5 py-2.5 text-venly-text
+      placeholder:text-gray-500 focus:border-venly-accent focus:outline-none focus:ring-2 focus:ring-venly-accent/40;
+  }
+
+  .venly-input-error {
+    @apply border-red-500/70 focus:border-red-500 focus:ring-red-500/40;
+  }
+
+  .venly-field-error {
+    @apply mt-1 min-h-[1.25rem] text-xs text-red-400;
+  }
+
+  .venly-btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-venly-accent to-rose-700
+      px-5 py-2.5 font-semibold text-white shadow-glow hover:-translate-y-0.5 hover:brightness-110
+      focus:outline-none focus:ring-2 focus:ring-venly-gold/60 active:translate-y-0
+      disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0;
+  }
+}
+
+/* Height + opacity transition for collapsible fields */
+.expand-enter-active,
+.expand-leave-active {
+  transition: max-height 0.35s ease, opacity 0.3s ease, transform 0.3s ease;
+  overflow: hidden;
+}
+.expand-enter-from,
+.expand-leave-to {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-6px);
+}
+.expand-enter-to,
+.expand-leave-from {
+  max-height: 140px;
+  opacity: 1;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
 }
