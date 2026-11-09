@@ -50,7 +50,14 @@ public class JsonDataStore {
             if (!Files.exists(dataFilePath) || Files.size(dataFilePath) == 0) {
                 writeRoot(objectMapper.createObjectNode());
             } else {
-                readRoot();
+                try {
+                    readRoot(); // validate it parses correctly
+                } catch (IOException ex) {
+                    // Corrupted file — back it up and start fresh
+                    Path backup = dataFilePath.resolveSibling(dataFilePath.getFileName() + ".corrupt");
+                    Files.copy(dataFilePath, backup, StandardCopyOption.REPLACE_EXISTING);
+                    writeRoot(objectMapper.createObjectNode());
+                }
             }
         } catch (IOException ex) {
             throw new IllegalStateException("No se pudo inicializar el archivo de datos: " + dataFilePath, ex);

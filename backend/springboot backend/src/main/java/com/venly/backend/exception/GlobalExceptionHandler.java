@@ -64,7 +64,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleUnexpected(Exception ex) {
         log.error("Error no controlado", ex);
-        return build(HttpStatus.INTERNAL_SERVER_ERROR, "Error interno del servidor", null);
+        // Expose the real cause so devs can diagnose — safe for a local dev project.
+        String detail = ex.getClass().getSimpleName() + ": " + ex.getMessage();
+        Throwable cause = ex.getCause();
+        if (cause != null) {
+            detail += " → " + cause.getClass().getSimpleName() + ": " + cause.getMessage();
+        }
+        return build(HttpStatus.INTERNAL_SERVER_ERROR, detail, null);
     }
 
     private static ResponseEntity<ApiErrorResponse> build(HttpStatus status, String message, Map<String, String> errors) {
