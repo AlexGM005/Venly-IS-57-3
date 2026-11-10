@@ -136,7 +136,6 @@ Sin sesión, cualquier ruta protegida redirige a `/login`. Con sesión, `/login`
 
 ```bash
 cd "backend/springboot backend"
-chmod +x mvnw
 ./mvnw spring-boot:run
 ```
 

@@ -65,9 +65,9 @@ onMounted(async () => {
         <h2 class="mt-8 text-sm font-semibold uppercase tracking-wider text-venly-gold">Sinopsis</h2>
         <p class="mt-2 whitespace-pre-line leading-relaxed text-gray-300">{{ movie.sinopsis }}</p>
 
-        <div v-if="isStaff" class="mt-auto pt-8">
+        <!-- <div v-if="isStaff" class="mt-auto pt-8">
           <RouterLink :to="{ name: 'pelicula-editar', params: { id: movie.id } }" class="venly-btn-primary">✏️ Editar película</RouterLink>
-        </div>
+        </div> -->
       </div>
     </article>
   </section>

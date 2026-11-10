@@ -33,7 +33,7 @@ public class JsonDataStore {
 
     public JsonDataStore(
             ObjectMapper objectMapper,
-            @Value("${venly.data.file:../../data/Base.json}") String dataFile
+            @Value("${venly.data.file:data/Base.json}") String dataFile
     ) {
         this.objectMapper = objectMapper.copy().enable(SerializationFeature.INDENT_OUTPUT);
         this.dataFilePath = Path.of(dataFile).toAbsolutePath().normalize();

@@ -49,9 +49,7 @@ const registerLoading = ref(false);
 const welcomeProfile = ref<Profile | null>(null);
 
 const roleOptions: { value: Role; label: string; description: string; icon: string }[] = [
-  { value: 'CLIENTE', label: 'Cliente', description: 'Disfruta la cartelera', icon: '🍿' },
-  { value: 'GERENTE', label: 'Gerente', description: 'Gestiona películas y salas', icon: '🎞️' },
-  { value: 'JEFE', label: 'Jefe', description: 'Administra la organización', icon: '⭐' }
+  // { value: 'CLIENTE', label: 'Cliente', description: 'Disfruta la cartelera', icon: '🍿' }  
 ];
 
 const needsOrganizationKey = computed(() => registerForm.rol === 'GERENTE' || registerForm.rol === 'JEFE');
@@ -264,7 +262,7 @@ async function submitRegister() {
             </div>
 
             <fieldset class="md:col-span-2">
-              <legend class="venly-label">Rol</legend>
+              
               <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <label
                   v-for="option in roleOptions"

@@ -46,14 +46,14 @@ const imageSrc = computed(() => movieImageSrc(props.movie));
         >
           Ver detalle
         </button>
-        <button
+        <!-- <button
           v-if="editable"
           type="button"
           class="rounded-lg bg-venly-gold/15 px-3 py-1.5 text-sm font-semibold text-venly-gold ring-1 ring-venly-gold/40 hover:bg-venly-gold/25 focus:outline-none focus:ring-2 focus:ring-venly-gold/60"
           @click.stop="emit('edit', movie.id)"
         >
           ✏️ Editar
-        </button>
+        </button> -->
       </div>
     </div>
   </article>
