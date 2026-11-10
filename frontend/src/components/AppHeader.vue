@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useSession } from '@/composables/useSession';
 
 const router = useRouter();
 const { currentUser, isLoggedIn, logout } = useSession();
 const menuOpen = ref(false);
+const isDark = ref(true);
+
 
 const links = computed(() =>
   isLoggedIn.value
@@ -13,19 +15,41 @@ const links = computed(() =>
         { to: '/menu', label: 'Menú principal' },
         { to: '/perfil', label: 'Perfil' }
       ]
-    : [{ to: '/crear-perfil', label: 'Crear perfil' }]
+    : [] // 👈 Retorna un arreglo vacío si no está autenticado
 );
 
 function handleLogout() {
   menuOpen.value = false;
   logout();
-  router.push({ name: 'crear-perfil' });
+  router.push({ name: 'login' });
 }
+
+function toggleTheme() {
+  isDark.value = !isDark.value;
+  if (isDark.value) {
+    document.documentElement.classList.add('dark');
+    localStorage.setItem('theme', 'dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+    localStorage.setItem('theme', 'light');
+  }
+}
+
+onMounted(() => {
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'light') {
+    isDark.value = false;
+    document.documentElement.classList.remove('dark');
+  } else {
+    isDark.value = true;
+    document.documentElement.classList.add('dark');
+  }
+});
 </script>
 
 <template>
   <header
-    class="sticky top-0 z-30 border-b border-venly-border/70 bg-gradient-to-r from-venly-bg via-venly-surface to-venly-bg/95 backdrop-blur"
+    class="sticky top-0 z-30 border-b border-venly-border/70 bg-gradient-to-r from-venly-bg via-venly-surface to-venly-bg/95 backdrop-blur transition-colors duration-300"
   >
     <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5">
       <RouterLink to="/" class="group flex items-center gap-2" @click="menuOpen = false">
@@ -45,6 +69,18 @@ function handleLogout() {
         >
           {{ link.label }}
         </RouterLink>
+
+        <!-- Botón de Modo Claro/Oscuro -->
+        <button
+          type="button"
+          class="ml-2 rounded-md p-2 text-sm text-venly-muted hover:bg-venly-card hover:text-venly-text transition-colors"
+          :title="isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
+          @click="toggleTheme"
+        >
+          <span v-if="isDark">☀️</span>
+          <span v-else>🌙</span>
+        </button>
+
         <template v-if="currentUser">
           <span class="ml-3 border-l border-venly-border pl-4 text-sm text-venly-muted">{{ currentUser.nombre }}</span>
           <button
@@ -57,18 +93,30 @@ function handleLogout() {
         </template>
       </nav>
 
-      <button
-        type="button"
-        class="rounded-md p-2 text-venly-muted hover:bg-venly-card hover:text-venly-text focus:outline-none focus:ring-2 focus:ring-venly-accent/50 sm:hidden"
-        :aria-expanded="menuOpen"
-        aria-label="Abrir menú"
-        @click="menuOpen = !menuOpen"
-      >
-        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path v-if="!menuOpen" stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16" />
-          <path v-else stroke-linecap="round" d="M6 6l12 12M18 6L6 18" />
-        </svg>
-      </button>
+      <div class="flex items-center gap-2 sm:hidden">
+        <!-- Botón Modo Claro/Oscuro móvil -->
+        <button
+          type="button"
+          class="rounded-md p-2 text-venly-muted hover:bg-venly-card hover:text-venly-text"
+          @click="toggleTheme"
+        >
+          <span v-if="isDark">☀️</span>
+          <span v-else>🌙</span>
+        </button>
+
+        <button
+          type="button"
+          class="rounded-md p-2 text-venly-muted hover:bg-venly-card hover:text-venly-text focus:outline-none focus:ring-2 focus:ring-venly-accent/50"
+          :aria-expanded="menuOpen"
+          aria-label="Abrir menú"
+          @click="menuOpen = !menuOpen"
+        >
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path v-if="!menuOpen" stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16" />
+            <path v-else stroke-linecap="round" d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      </div>
     </div>
 
     <Transition name="expand">
