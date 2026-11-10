@@ -3,11 +3,18 @@ spring:
     name: venly-backend
 
 server:
-  port: 8080
+  error:
+    include-exception: true
+    include-stacktrace: always
+
+logging:
+  level:
+    web: DEBUG
+    org.springframework.web: DEBUG
 
 venly:
   data:
-    file: ../../data/Base.json
+    file: "data/Base.json"
   security:
     organization-key-hash: ${VENLY_ORG_KEY_HASH:}
     organization-key-default: Venly2024

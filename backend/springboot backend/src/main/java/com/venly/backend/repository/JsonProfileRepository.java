@@ -5,7 +5,6 @@ import com.venly.backend.model.Profile;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 import org.springframework.stereotype.Repository;
 
 /** Profile persistence backed by the "Perfiles" collection of the JSON data store. */
@@ -24,21 +23,20 @@ public class JsonProfileRepository implements ProfileRepository {
 
     @Override
     public Profile save(Profile profile) {
-        return dataStore.updateCollection(COLLECTION_KEY, PROFILE_LIST_TYPE, profiles -> {
-            long nextId = profiles.stream()
-                    .map(Profile::getId)
-                    .filter(Objects::nonNull)
-                    .max(Long::compareTo)
-                    .orElse(0L) + 1;
-            profile.setId(nextId);
-            profiles.add(profile);
-            return profile;
-        });
+        return dataStore.insert(COLLECTION_KEY, PROFILE_LIST_TYPE, profile, Profile::getId, Profile::setId);
+    }
+
+    @Override
+    public Profile update(Profile profile) {
+        return dataStore.replace(COLLECTION_KEY, PROFILE_LIST_TYPE, profile, Profile::getId);
     }
 
     @Override
     public Optional<Profile> findById(Long id) {
-        return findFirstBy(Profile::getId, id);
+        if (id == null) {
+            return Optional.empty();
+        }
+        return findAll().stream().filter(p -> Objects.equals(p.getId(), id)).findFirst();
     }
 
     @Override
@@ -56,13 +54,6 @@ public class JsonProfileRepository implements ProfileRepository {
     @Override
     public List<Profile> findAll() {
         return dataStore.getCollection(COLLECTION_KEY, PROFILE_LIST_TYPE);
-    }
-
-    private <V> Optional<Profile> findFirstBy(Function<Profile, V> getter, V value) {
-        if (value == null) {
-            return Optional.empty();
-        }
-        return findAll().stream().filter(p -> value.equals(getter.apply(p))).findFirst();
     }
 
     private static String normalize(String value) {

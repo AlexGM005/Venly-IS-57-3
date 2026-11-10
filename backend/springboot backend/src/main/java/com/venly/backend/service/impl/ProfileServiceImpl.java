@@ -1,117 +1,68 @@
 package com.venly.backend.service.impl;
 
-import com.venly.backend.config.OrganizationKeyProvider;
-import com.venly.backend.dto.CreateProfileRequest;
 import com.venly.backend.dto.ProfileResponse;
+import com.venly.backend.dto.UpdateProfileRequest;
 import com.venly.backend.exception.BusinessException;
 import com.venly.backend.model.Profile;
-import com.venly.backend.model.Role;
 import com.venly.backend.repository.ProfileRepository;
 import com.venly.backend.service.ProfileService;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ProfileServiceImpl implements ProfileService {
 
     private final ProfileRepository profileRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final OrganizationKeyProvider organizationKeyProvider;
+    private final RequesterResolver requesterResolver;
 
-    public ProfileServiceImpl(
-            ProfileRepository profileRepository,
-            PasswordEncoder passwordEncoder,
-            OrganizationKeyProvider organizationKeyProvider
-    ) {
+    public ProfileServiceImpl(ProfileRepository profileRepository, RequesterResolver requesterResolver) {
         this.profileRepository = profileRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.organizationKeyProvider = organizationKeyProvider;
+        this.requesterResolver = requesterResolver;
     }
 
     @Override
-    public ProfileResponse createProfile(CreateProfileRequest request) {
-        Role requestedRole = request.getRol() == null ? Role.CLIENTE : request.getRol();
+    public ProfileResponse getMe(Long requesterId) {
+        return ProfileMapper.toResponse(requesterResolver.require(requesterId));
+    }
 
-        if (profileRepository.findByCorreo(request.getCorreo()).isPresent()) {
-            throw new BusinessException(HttpStatus.CONFLICT, "El correo ya está registrado");
-        }
+    @Override
+    public ProfileResponse updateMe(Long requesterId, UpdateProfileRequest request) {
+        Profile profile = requesterResolver.require(requesterId);
+        String newEmail = request.getCorreo().trim().toLowerCase();
 
-        if (profileRepository.findByCedula(request.getCedula()).isPresent()) {
-            throw new BusinessException(HttpStatus.CONFLICT, "La cédula ya está registrada");
-        }
+        profileRepository.findByCorreo(newEmail)
+                .filter(other -> !Objects.equals(other.getId(), profile.getId()))
+                .ifPresent(other -> {
+                    throw new BusinessException(HttpStatus.CONFLICT, "El correo ya está en uso por otro perfil");
+                });
 
-        if (requestedRole == Role.GERENTE || requestedRole == Role.JEFE) {
-            validateOrganizationKey(request.getClaveOrganizacion());
-        }
-
-        Profile profile = new Profile();
-        profile.setNombre(request.getNombre().trim());
-        profile.setCedula(request.getCedula().trim());
-        profile.setCorreo(request.getCorreo().trim().toLowerCase());
+        profile.setNombre(ProfileMapper.normalizeName(request.getNombre()));
+        profile.setCorreo(newEmail);
         profile.setTelefono(request.getTelefono().trim());
-        profile.setRol(requestedRole == null ? Role.CLIENTE : requestedRole);
-        profile.setPasswordHash(passwordEncoder.encode(request.getContrasena()));
-
-        Profile createdProfile = profileRepository.save(profile);
-        return toResponse(createdProfile);
+        return ProfileMapper.toResponse(profileRepository.update(profile));
     }
 
     @Override
-    public ProfileResponse getProfileById(Long id) {
-        Profile profile = profileRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Perfil no encontrado"));
-        return toResponse(profile);
+    public List<ProfileResponse> getAll(Long requesterId) {
+        requesterResolver.requireStaff(requesterId, "Solo un gerente o jefe puede consultar el listado de perfiles");
+        return profileRepository.findAll().stream()
+                .sorted(Comparator.comparing(Profile::getId))
+                .map(ProfileMapper::toResponse)
+                .toList();
     }
 
     @Override
-    public ProfileResponse getProfile(Long pathId, Long requesterId) {
-        Profile requester = findRequester(requesterId);
-        boolean isStaff = requester.getRol() == Role.GERENTE || requester.getRol() == Role.JEFE;
-        if (!isStaff && !pathId.equals(requesterId)) {
+    public ProfileResponse getById(Long id, Long requesterId) {
+        Profile requester = requesterResolver.require(requesterId);
+        boolean isOwnProfile = Objects.equals(requester.getId(), id);
+        if (!isOwnProfile && (requester.getRol() == null || !requester.getRol().isStaff())) {
             throw new BusinessException(HttpStatus.FORBIDDEN, "Un cliente solo puede consultar su propio perfil");
         }
-        return getProfileById(pathId);
-    }
-
-    @Override
-    public List<ProfileResponse> getProfilesForChief(Long requesterId) {
-        Profile requester = findRequester(requesterId);
-
-        if (requester.getRol() != Role.JEFE) {
-            throw new BusinessException(HttpStatus.FORBIDDEN, "Solo un jefe puede consultar el listado de perfiles");
-        }
-
-        return profileRepository.findAll().stream().map(this::toResponse).toList();
-    }
-
-    private Profile findRequester(Long requesterId) {
-        return profileRepository.findById(requesterId)
-                .orElseThrow(() -> new BusinessException(HttpStatus.UNAUTHORIZED, "La sesión no corresponde a un perfil existente"));
-    }
-
-    private void validateOrganizationKey(String organizationKey) {
-        String hash = organizationKeyProvider.getOrganizationKeyHash();
-        if (hash == null || hash.isBlank()) {
-            throw new BusinessException(HttpStatus.FORBIDDEN, "La clave de organización no está configurada");
-        }
-        if (organizationKey == null || organizationKey.isBlank()) {
-            throw new BusinessException(HttpStatus.BAD_REQUEST, "Debe indicar la clave de organización para este rol");
-        }
-        if (!passwordEncoder.matches(organizationKey, hash)) {
-            throw new BusinessException(HttpStatus.FORBIDDEN, "La clave de organización es inválida");
-        }
-    }
-
-    private ProfileResponse toResponse(Profile profile) {
-        ProfileResponse response = new ProfileResponse();
-        response.setId(profile.getId());
-        response.setNombre(profile.getNombre());
-        response.setCedula(profile.getCedula());
-        response.setCorreo(profile.getCorreo());
-        response.setTelefono(profile.getTelefono());
-        response.setRol(profile.getRol());
-        return response;
+        return profileRepository.findById(id)
+                .map(ProfileMapper::toResponse)
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Perfil no encontrado"));
     }
 }
