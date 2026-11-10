@@ -1,12 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router';
-<<<<<<< HEAD
-import LoginView from '@/views/LoginView.vue';
-import AdminLoginView from '@/views/AdminLoginView.vue';
-import CreateProfileView from '@/views/CreateProfileView.vue';
-import MainMenuView from '@/views/MainMenuView.vue';
-import ProfileView from '@/views/ProfileView.vue';
-=======
->>>>>>> origin/feature/Release-1
 import { useSession } from '@/composables/useSession';
 
 declare module 'vue-router' {
@@ -23,66 +15,49 @@ const router = createRouter({
   history: createWebHistory(),
   scrollBehavior: () => ({ top: 0 }),
   routes: [
-<<<<<<< HEAD
-    { path: '/', redirect: '/login' },
+    { path: '/', redirect: '/menu' },
     { 
       path: '/login', 
       name: 'login', 
-      component: LoginView, 
-      meta: { guestOnly: true } 
+      component: () => import('@/views/LoginView.vue'), 
+      meta: { guestOnly: true, title: 'Ingresar' } 
     },
     { 
       path: '/admin-login', 
       name: 'admin-login', 
-      component: AdminLoginView, 
-      meta: { guestOnly: true } 
+      component: () => import('@/views/AdminLoginView.vue'), 
+      meta: { guestOnly: true, title: 'Acceso Gerencial' } 
     },
     { 
       path: '/crear-perfil', 
       name: 'crear-perfil', 
-      component: CreateProfileView, 
-      meta: { guestOnly: true } 
+      component: () => import('@/views/CreateProfileView.vue'), 
+      meta: { guestOnly: true, title: 'Crear perfil' } 
     },
     { 
       path: '/menu', 
       name: 'menu', 
-      component: MainMenuView, 
-      meta: { requiresAuth: true } 
+      component: () => import('@/views/MainMenuView.vue'), 
+      meta: { title: 'Menú principal' } 
     },
     { 
       path: '/perfil', 
-      name: 'perfil', 
-      component: ProfileView, 
-      meta: { requiresAuth: true } 
+      name: 'mi-perfil', 
+      component: () => import('@/views/MyProfileView.vue'), 
+      meta: { title: 'Mi perfil' } 
     },
-    { path: '/consultar-perfil', redirect: '/perfil' },
-    { path: '/:pathMatch(.*)*', redirect: '/login' }
-  ]
-});
-
-router.beforeEach(async (to) => {
-  const { restore } = useSession();
-  const loggedIn = await restore();
-  
-  if (to.meta.requiresAuth && !loggedIn) return { name: 'login' };
-  if (to.meta.guestOnly && loggedIn) return { name: 'menu' };
-  
-  return true;
-});
-
-export default router;
-=======
-    { path: '/', redirect: '/menu' },
-    { path: '/login', name: 'login', component: () => import('@/views/LoginView.vue'), meta: { guestOnly: true, title: 'Ingresar' } },
-    { path: '/menu', name: 'menu', component: () => import('@/views/MainMenuView.vue'), meta: { title: 'Menú principal' } },
-    { path: '/perfil', name: 'mi-perfil', component: () => import('@/views/MyProfileView.vue'), meta: { title: 'Mi perfil' } },
     {
       path: '/perfiles',
       name: 'perfiles',
       component: () => import('@/views/ProfileDirectoryView.vue'),
       meta: { staffOnly: true, title: 'Gestión de perfiles' }
     },
-    { path: '/peliculas', name: 'peliculas', component: () => import('@/views/MovieCatalogView.vue'), meta: { title: 'Películas' } },
+    { 
+      path: '/peliculas', 
+      name: 'peliculas', 
+      component: () => import('@/views/MovieCatalogView.vue'), 
+      meta: { title: 'Películas' } 
+    },
     {
       path: '/peliculas/nueva',
       name: 'pelicula-nueva',
@@ -120,4 +95,3 @@ router.afterEach((to) => {
 });
 
 export default router;
->>>>>>> origin/feature/Release-1
