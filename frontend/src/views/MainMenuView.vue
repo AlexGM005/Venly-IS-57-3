@@ -2,8 +2,11 @@
 import { computed } from 'vue';
 import RoleBadge from '@/components/RoleBadge.vue';
 import { useSession } from '@/composables/useSession';
+import RegistrarGerenteView from '@/views/RegistrarGerenteView.vue';
 
 const { currentUser, firstName, isStaff } = useSession();
+
+const isJefe = computed(() => currentUser.value?.rol === 'JEFE');
 
 interface MenuOption {
   to: string;
@@ -13,41 +16,56 @@ interface MenuOption {
   accent: string;
 }
 
-const options = computed<MenuOption[]>(() =>
-  isStaff.value
-    ? [
-        {
-          to: '/perfiles',
-          title: 'Gestión de Perfiles',
-          description: 'Directorio de todos los perfiles registrados, con búsqueda por nombre o cédula.',
-          icon: '👥',
-          accent: 'from-venly-gold/30'
-        },
-        {
-          to: '/peliculas',
-          title: 'Gestión de Películas',
-          description: 'Añade nuevas películas a la cartelera y edita las existentes.',
-          icon: '🎞️',
-          accent: 'from-venly-accent/30'
-        }
-      ]
-    : [
-        {
-          to: '/perfil',
-          title: 'Mi Perfil',
-          description: 'Consulta tus datos y actualiza tu nombre, correo o teléfono.',
-          icon: '👤',
-          accent: 'from-sky-500/30'
-        },
-        {
-          to: '/peliculas',
-          title: 'Catálogo de Películas',
-          description: 'Explora la cartelera con horarios, duración, clasificación y sala.',
-          icon: '🍿',
-          accent: 'from-venly-accent/30'
-        }
-      ]
-);
+const options = computed<MenuOption[]>(() => {
+  if (isStaff.value) {
+    const staffOptions: MenuOption[] = [
+      {
+        to: '/perfiles',
+        title: 'Gestión de Perfiles',
+        description: 'Directorio de todos los perfiles registrados, con búsqueda por nombre o cédula.',
+        icon: '👥',
+        accent: 'from-venly-gold/30'
+      },
+      {
+        to: '/peliculas',
+        title: 'Gestión de Películas',
+        description: 'Añade nuevas películas a la cartelera y edita las existentes.',
+        icon: '🎞️',
+        accent: 'from-venly-accent/30'
+      }
+    ];
+
+    // Solo se agrega esta tarjeta si el usuario tiene el rol JEFE
+    if (isJefe.value) {
+      staffOptions.push({
+        to: '/registro-gerente', // 👈 Ajusta esta ruta a tu ruta real de registro
+        title: 'Registrar Gerente',
+        description: 'Crear nuevas cuentas administrativas con acceso a gestión de salas y películas.',
+        icon: '👔',
+        accent: 'from-emerald-500/30' // Destacado en tono esmeralda/verde
+      });
+    }
+
+    return staffOptions;
+  }
+
+  return [
+    {
+      to: '/perfil',
+      title: 'Mi Perfil',
+      description: 'Consulta tus datos y actualiza tu nombre, correo o teléfono.',
+      icon: '👤',
+      accent: 'from-sky-500/30'
+    },
+    {
+      to: '/peliculas',
+      title: 'Catálogo de Películas',
+      description: 'Explora la cartelera con horarios, duración, clasificación y sala.',
+      icon: '🍿',
+      accent: 'from-venly-accent/30'
+    }
+  ];
+});
 </script>
 
 <template>
@@ -59,6 +77,7 @@ const options = computed<MenuOption[]>(() =>
         Has iniciado sesión como <RoleBadge :role="currentUser.rol" />
       </p>
     </header>
+  
 
     <div class="grid gap-6 sm:grid-cols-2">
       <RouterLink

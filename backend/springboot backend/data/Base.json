@@ -44,6 +44,30 @@
     "telefono" : "04241535866",
     "passwordHash" : "$2a$10$iizcwXFJtXow9gDIHz0oe.U7ww5D3Op/Fj5rrkiaz/AcKwctUZ6nS",
     "rol" : "CLIENTE"
+  }, {
+    "id" : 4,
+    "nombre" : "ismael Quintero",
+    "cedula" : "31247785",
+    "correo" : "ismaeel@gmail.com",
+    "telefono" : "04841566566",
+    "passwordHash" : "$2a$10$us6fHK9oZx9G1EvEQQy2veTDRwS6SW5TcuN1t10CXlbio8sXsNZMa",
+    "rol" : "CLIENTE"
+  }, {
+    "id" : 5,
+    "nombre" : "Super Administrador (Jefe)",
+    "cedula" : "00000001",
+    "correo" : "jefe@cine.com",
+    "telefono" : "04120000000",
+    "passwordHash" : "$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2",
+    "rol" : "JEFE"
+  }, {
+    "id" : 6,
+    "nombre" : "Luis Delgado",
+    "cedula" : "31245785",
+    "correo" : "luis@gmail.com",
+    "telefono" : "04841566576",
+    "passwordHash" : "$2a$10$gIuGCHGcxZJWh2xfqF6ka.CG1hpFeIeUW70lytKEAUZgigHFufKTy",
+    "rol" : "GERENTE"
   } ],
   "Peliculas" : [ {
     "id" : 1,

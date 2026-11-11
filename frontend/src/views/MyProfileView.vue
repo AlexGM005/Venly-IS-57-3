@@ -88,7 +88,7 @@ async function save() {
 
     <ProfileCard :profile="currentUser">
       <template #actions>
-        <button type="button" class="venly-btn-primary" @click="openEdit">✏️ Editar perfil</button>
+        <!-- <button type="button" class="venly-btn-primary" @click="openEdit">✏️ Editar perfil</button> -->
       </template>
     </ProfileCard>
 

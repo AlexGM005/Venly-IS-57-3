@@ -72,7 +72,10 @@ function switchTab(tab: Tab) {
 }
 
 function inputClass(error?: string): string[] {
-  return ['venly-input', error ? 'venly-input-error' : ''];
+  return [
+    'w-full rounded-xl border border-venly-border bg-venly-bg/80 px-4 py-2.5 text-venly-text focus:ring-2 focus:ring-venly-accent',
+    error ? 'venly-input-error' : ''
+  ];
 }
 
 /** Stores the profile as the simulated session and opens the main menu after a short confirmation. */
@@ -140,28 +143,18 @@ async function submitRegister() {
 </script>
 
 <template>
-  <section class="mx-auto grid max-w-6xl animate-fade-up items-start gap-10 lg:grid-cols-[1fr_1.15fr]">
-    <!-- Brand panel -->
-    <aside class="relative hidden overflow-hidden rounded-3xl border border-venly-border bg-gradient-to-br from-venly-surface via-venly-card to-venly-bg p-10 lg:block">
-      <div class="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-venly-accent/25 blur-3xl"></div>
-      <div class="absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-venly-gold/15 blur-3xl"></div>
-      <div class="relative">
-        <p class="text-xs font-semibold uppercase tracking-[0.35em] text-venly-gold">Venly Cinemas</p>
-        <h1 class="mt-4 text-4xl font-extrabold leading-tight">
-          La magia del cine
-          <span class="bg-gradient-to-r from-venly-accent to-venly-gold bg-clip-text text-transparent">empieza aquí</span>
-        </h1>
-        <p class="mt-4 text-venly-muted">Consulta la cartelera, descubre horarios y salas, y gestiona tu perfil en un solo lugar.</p>
-        <ul class="mt-8 space-y-4 text-sm">
-          <li class="flex items-center gap-3"><span class="text-xl">🎬</span> Cartelera actualizada con sinopsis y clasificación</li>
-          <li class="flex items-center gap-3"><span class="text-xl">🕒</span> Horarios y salas asignadas de cada función</li>
-          <li class="flex items-center gap-3"><span class="text-xl">🛡️</span> Contraseñas protegidas con cifrado BCrypt</li>
-        </ul>
-        <div class="mt-10 flex gap-2" aria-hidden="true">
-          <span v-for="n in 7" :key="n" class="h-3 w-6 rounded-sm bg-venly-border/80"></span>
-        </div>
-      </div>
-    </aside>
+  <section class="mx-auto flex w-full max-w-md animate-fade-up flex-col gap-6">
+    <header class="space-y-2 text-center">
+      <p class="text-xs font-bold uppercase tracking-widest text-venly-gold">
+        {{ activeTab === 'login' ? 'BIENVENIDO DE NUEVO' : 'REGISTRO' }}
+      </p>
+      <h1 class="text-3xl font-extrabold tracking-tight">
+        {{ activeTab === 'login' ? 'Iniciaaaa sesión en Venly' : 'Crea tu perfil en Venly' }}
+      </h1>
+      <p class="text-sm text-venly-muted">
+        {{ activeTab === 'login' ? 'Ingresa tus datos para acceder a tu cuenta.' : 'Completa tus datos para crear tu cuenta.' }}
+      </p>
+    </header>
 
     <div>
       <Transition name="fade">
@@ -179,63 +172,34 @@ async function submitRegister() {
         </div>
       </Transition>
 
-      <div class="venly-card overflow-hidden">
-        <div class="grid grid-cols-2 border-b border-venly-border" role="tablist">
-          <button
-            v-for="tab in ([['login', 'Iniciar sesión'], ['registro', 'Registrarse']] as const)"
-            :key="tab[0]"
-            type="button"
-            role="tab"
-            :aria-selected="activeTab === tab[0]"
-            class="relative py-4 text-sm font-semibold focus:outline-none focus-visible:bg-venly-card"
-            :class="activeTab === tab[0] ? 'text-venly-text' : 'text-venly-muted hover:text-venly-text'"
-            @click="switchTab(tab[0])"
-          >
-            {{ tab[1] }}
-            <span
-              class="absolute inset-x-6 -bottom-px h-0.5 rounded-full bg-venly-accent shadow-glow transition-opacity"
-              :class="activeTab === tab[0] ? 'opacity-100' : 'opacity-0'"
-            ></span>
-          </button>
-        </div>
-
+      <div class="venly-card space-y-5 rounded-2xl border border-venly-border bg-venly-card/40 p-6 shadow-xl sm:p-8">
         <Transition name="tab" mode="out-in">
-          <!-- LOGIN -->
-          <form v-if="activeTab === 'login'" key="login" class="space-y-2 p-6 sm:p-8" novalidate @submit.prevent="submitLogin">
-            <div class="mb-4">
-              <h2 class="text-2xl font-bold">Bienvenido de nuevo</h2>
-              <p class="text-sm text-venly-muted">Ingresa con tu correo y contraseña.</p>
-            </div>
+          <form v-if="activeTab === 'login'" key="login" class="space-y-4" novalidate @submit.prevent="submitLogin">
             <div v-if="loginError" class="venly-alert-error" role="alert">{{ loginError }}</div>
             <div>
-              <label for="login-correo" class="venly-label">Correo electrónico</label>
+              <label for="login-correo" class="mb-1 block text-xs font-medium text-venly-muted">Correo electrónico</label>
               <input id="login-correo" v-model="loginForm.correo" type="email" autocomplete="email" placeholder="tu@correo.com" :class="inputClass(loginErrors.correo)" />
-              <p class="venly-field-error">{{ loginErrors.correo }}</p>
+              <p v-if="loginErrors.correo" class="venly-field-error">{{ loginErrors.correo }}</p>
             </div>
             <div>
-              <label for="login-contrasena" class="venly-label">Contraseña</label>
+              <label for="login-contrasena" class="mb-1 block text-xs font-medium text-venly-muted">Contraseña</label>
               <input id="login-contrasena" v-model="loginForm.contrasena" type="password" autocomplete="current-password" placeholder="••••••••" :class="inputClass(loginErrors.contrasena)" />
-              <p class="venly-field-error">{{ loginErrors.contrasena }}</p>
+              <p v-if="loginErrors.contrasena" class="venly-field-error">{{ loginErrors.contrasena }}</p>
             </div>
-            <button type="submit" class="venly-btn-primary w-full" :disabled="loginLoading || welcomeProfile !== null">
+            <button
+              type="submit"
+              class="w-full rounded-xl bg-venly-accent py-3 font-bold text-white shadow-glow transition-all hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+              :disabled="loginLoading || welcomeProfile !== null"
+            >
               <LoadingSpinner v-if="loginLoading" />
-              {{ loginLoading ? 'Ingresando…' : 'Iniciar sesión' }}
+              {{ loginLoading ? 'Iniciando...' : 'Iniciar sesión' }}
             </button>
-            <p class="pt-3 text-center text-sm text-venly-muted">
-              ¿No tienes cuenta?
-              <button type="button" class="font-semibold text-venly-accent hover:underline" @click="switchTab('registro')">Regístrate</button>
-            </p>
           </form>
 
-          <!-- REGISTRO -->
-          <form v-else key="registro" class="grid grid-cols-1 gap-x-5 gap-y-1 p-6 sm:p-8 md:grid-cols-2" novalidate @submit.prevent="submitRegister">
-            <div class="mb-3 md:col-span-2">
-              <h2 class="text-2xl font-bold">Crea tu perfil</h2>
-              <p class="text-sm text-venly-muted">Al registrarte iniciarás sesión automáticamente.</p>
-            </div>
-            <div v-if="registerError" class="venly-alert-error mb-2 md:col-span-2" role="alert">{{ registerError }}</div>
+          <form v-else key="registro" class="grid grid-cols-1 gap-x-5 gap-y-1 sm:grid-cols-2" novalidate @submit.prevent="submitRegister">
+            <div v-if="registerError" class="venly-alert-error mb-2 sm:col-span-2" role="alert">{{ registerError }}</div>
 
-            <div class="md:col-span-2">
+            <div class="sm:col-span-2">
               <label for="nombre" class="venly-label">Nombre completo</label>
               <input id="nombre" v-model="registerForm.nombre" type="text" autocomplete="name" placeholder="Ej. Ana Pérez" :class="inputClass(registerErrors.nombre)" />
               <p class="venly-field-error">{{ registerErrors.nombre }}</p>
@@ -261,8 +225,7 @@ async function submitRegister() {
               <p class="venly-field-error">{{ registerErrors.contrasena }}</p>
             </div>
 
-            <fieldset class="md:col-span-2">
-              
+            <fieldset class="sm:col-span-2">
               <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <label
                   v-for="option in roleOptions"
@@ -280,7 +243,7 @@ async function submitRegister() {
             </fieldset>
 
             <Transition name="expand">
-              <div v-if="needsOrganizationKey" class="mt-3 md:col-span-2">
+              <div v-if="needsOrganizationKey" class="mt-3 sm:col-span-2">
                 <label for="claveOrganizacion" class="venly-label">
                   Clave de organización <span class="text-venly-gold">· requerida para {{ registerForm.rol === 'JEFE' ? 'Jefe' : 'Gerente' }}</span>
                 </label>
@@ -297,7 +260,7 @@ async function submitRegister() {
               </div>
             </Transition>
 
-            <div class="mt-4 md:col-span-2">
+            <div class="mt-4 sm:col-span-2">
               <button type="submit" class="venly-btn-primary w-full" :disabled="registerLoading || welcomeProfile !== null">
                 <LoadingSpinner v-if="registerLoading" />
                 {{ registerLoading ? 'Creando perfil…' : 'Crear perfil' }}
@@ -309,7 +272,25 @@ async function submitRegister() {
             </div>
           </form>
         </Transition>
+
+        <div v-if="activeTab === 'login'" class="border-t border-venly-border/40 pt-3 text-center text-xs text-venly-muted">
+          ¿No tienes cuenta aún?
+          <button type="button" class="ml-1 font-semibold text-venly-gold hover:underline" @click="switchTab('registro')">
+            Crea tu perfil aquí
+          </button>
+        </div>
       </div>
     </div>
+
+    <!-- <div class="fixed bottom-6 right-6 z-40">
+      <RouterLink
+        to="/admin-login"
+        class="group flex h-12 w-12 items-center justify-center rounded-full border border-venly-gold/40 bg-venly-card text-venly-gold shadow-2xl transition-all hover:scale-110 hover:border-venly-gold hover:bg-venly-gold/10"
+        title="Acceso exclusivo para Gerentes"
+        aria-label="Acceso exclusivo para Gerentes"
+      >
+        <span class="text-xl transition-transform group-hover:rotate-12" aria-hidden="true">🛡️</span>
+      </RouterLink>
+    </div> -->
   </section>
 </template>

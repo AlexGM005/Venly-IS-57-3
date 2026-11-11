@@ -35,6 +35,12 @@ const router = createRouter({
       meta: { guestOnly: true, title: 'Crear perfil' } 
     },
     { 
+      path: '/registro-gerente',
+      name: 'registro-gerente',
+      component: () => import('@/views/RegistrarGerenteView.vue'), 
+      meta: { requiresAuth: true, title: 'Registrar gerente' } 
+    },
+    { 
       path: '/menu', 
       name: 'menu', 
       component: () => import('@/views/MainMenuView.vue'), 

@@ -71,7 +71,7 @@ const handleLogin = async () => {
     </main>
 
     <!-- Botón circular flotante en la esquina inferior derecha para Administradores/Gerentes -->
-    <div class="fixed bottom-6 right-6 z-40">
+    <!-- <div class="fixed bottom-6 right-6 z-40">
       <router-link
         to="/admin-login"
         class="flex h-12 w-12 items-center justify-center rounded-full bg-venly-card border border-venly-gold/40 text-venly-gold shadow-2xl hover:scale-110 hover:border-venly-gold hover:bg-venly-gold/10 transition-all group"
@@ -79,6 +79,6 @@ const handleLogin = async () => {
       >
         <span class="text-xl group-hover:rotate-12 transition-transform">🛡️</span>
       </router-link>
-    </div>
+    </div> -->
   </div>
 </template>
