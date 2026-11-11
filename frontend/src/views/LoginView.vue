@@ -149,7 +149,7 @@ async function submitRegister() {
         {{ activeTab === 'login' ? 'BIENVENIDO DE NUEVO' : 'REGISTRO' }}
       </p>
       <h1 class="text-3xl font-extrabold tracking-tight">
-        {{ activeTab === 'login' ? 'Iniciaaaa sesión en Venly' : 'Crea tu perfil en Venly' }}
+        {{ activeTab === 'login' ? 'Inicia sesión en Venly' : 'Crea tu perfil en Venly' }}
       </h1>
       <p class="text-sm text-venly-muted">
         {{ activeTab === 'login' ? 'Ingresa tus datos para acceder a tu cuenta.' : 'Completa tus datos para crear tu cuenta.' }}
