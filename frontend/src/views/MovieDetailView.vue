@@ -15,6 +15,7 @@ const error = ref('');
 const imageSrc = computed(() => (movie.value ? movieImageSrc(movie.value) : null));
 
 onMounted(async () => {
+  console.log("[VENLY TRACE - FRONTEND] Acción: Solicitando detalle de película seleccionada en frontend/src/views/MovieDetailView.vue -> enviando petición a frontend/src/services/movieService.ts");
   try {
     movie.value = await getMovie(props.id);
   } catch (e) {

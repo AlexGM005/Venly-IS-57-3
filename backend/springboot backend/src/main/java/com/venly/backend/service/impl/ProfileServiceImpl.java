@@ -25,11 +25,13 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public ProfileResponse getMe(Long requesterId) {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Resolviendo sesión y consultando perfil propio en backend/springboot backend/src/main/java/com/venly/backend/service/impl/ProfileServiceImpl.java -> consultando backend/springboot backend/src/main/java/com/venly/backend/service/impl/RequesterResolver.java");
         return ProfileMapper.toResponse(requesterResolver.require(requesterId));
     }
 
     @Override
     public ProfileResponse updateMe(Long requesterId, UpdateProfileRequest request) {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Validando correo duplicado y actualizando perfil propio en backend/springboot backend/src/main/java/com/venly/backend/service/impl/ProfileServiceImpl.java -> consultando repositorio backend/springboot backend/src/main/java/com/venly/backend/repository/JsonProfileRepository.java");
         Profile profile = requesterResolver.require(requesterId);
         String newEmail = request.getCorreo().trim().toLowerCase();
 
@@ -47,6 +49,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public List<ProfileResponse> getAll(Long requesterId) {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Verificando restricción de Staff y listando todos los perfiles en backend/springboot backend/src/main/java/com/venly/backend/service/impl/ProfileServiceImpl.java -> consultando repositorio backend/springboot backend/src/main/java/com/venly/backend/repository/JsonProfileRepository.java");
         requesterResolver.requireStaff(requesterId, "Solo un gerente o jefe puede consultar el listado de perfiles");
         return profileRepository.findAll().stream()
                 .sorted(Comparator.comparing(Profile::getId))
@@ -56,6 +59,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public ProfileResponse getById(Long id, Long requesterId) {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Verificando restricción Cliente vs Staff para consultar perfil por id en backend/springboot backend/src/main/java/com/venly/backend/service/impl/ProfileServiceImpl.java -> consultando repositorio backend/springboot backend/src/main/java/com/venly/backend/repository/JsonProfileRepository.java");
         Profile requester = requesterResolver.require(requesterId);
         boolean isOwnProfile = Objects.equals(requester.getId(), id);
         if (!isOwnProfile && (requester.getRol() == null || !requester.getRol().isStaff())) {

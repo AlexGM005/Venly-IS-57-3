@@ -5,22 +5,27 @@ export const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 export const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png'] as const;
 
 export function getMovies(): Promise<Movie[]> {
+  console.log("[VENLY TRACE - FRONTEND] Acción: Solicitando cartelera de películas en frontend/src/services/movieService.ts -> dirigiendo a frontend/src/services/httpClient.ts");
   return request<Movie[]>('/peliculas');
 }
 
 export function getMovie(id: number): Promise<Movie> {
+  console.log("[VENLY TRACE - FRONTEND] Acción: Solicitando detalle de película por id en frontend/src/services/movieService.ts -> dirigiendo a frontend/src/services/httpClient.ts");
   return request<Movie>(`/peliculas/${id}`);
 }
 
 export function createMovie(payload: MoviePayload): Promise<Movie> {
+  console.log("[VENLY TRACE - FRONTEND] Acción: Enviando creación de película (exclusivo Gerente/Jefe) en frontend/src/services/movieService.ts -> dirigiendo a frontend/src/services/httpClient.ts");
   return request<Movie>('/peliculas', { method: 'POST', body: payload });
 }
 
 export function updateMovie(id: number, payload: MoviePayload): Promise<Movie> {
+  console.log("[VENLY TRACE - FRONTEND] Acción: Enviando edición de película (exclusivo Gerente/Jefe) en frontend/src/services/movieService.ts -> dirigiendo a frontend/src/services/httpClient.ts");
   return request<Movie>(`/peliculas/${id}`, { method: 'PUT', body: payload });
 }
 
 export function getRooms(): Promise<Room[]> {
+  console.log("[VENLY TRACE - FRONTEND] Acción: Solicitando listado de salas disponibles en frontend/src/services/movieService.ts -> dirigiendo a frontend/src/services/httpClient.ts");
   return request<Room[]>('/peliculas/salas');
 }
 

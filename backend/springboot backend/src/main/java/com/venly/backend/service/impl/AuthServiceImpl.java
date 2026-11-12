@@ -32,6 +32,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ProfileResponse register(CreateProfileRequest request) {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Validando duplicados (correo/cédula) y asignando rol y contraseña con hash BCrypt en backend/springboot backend/src/main/java/com/venly/backend/service/impl/AuthServiceImpl.java -> consultando repositorio backend/springboot backend/src/main/java/com/venly/backend/repository/JsonProfileRepository.java");
         Role role = request.getRol() == null ? Role.CLIENTE : request.getRol();
 
         if (profileRepository.findByCorreo(request.getCorreo()).isPresent()) {
@@ -57,6 +58,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ProfileResponse login(LoginRequest request) {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Verificando credenciales y comparando hash BCrypt en backend/springboot backend/src/main/java/com/venly/backend/service/impl/AuthServiceImpl.java -> consultando repositorio backend/springboot backend/src/main/java/com/venly/backend/repository/JsonProfileRepository.java");
         Profile profile = profileRepository.findByCorreo(request.getCorreo())
                 .orElseThrow(() -> new BusinessException(HttpStatus.UNAUTHORIZED, INVALID_CREDENTIALS));
         if (profile.getPasswordHash() == null
@@ -67,6 +69,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private void validateOrganizationKey(String organizationKey) {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Validando clave de organización para creación de perfil Staff (Gerente/Jefe) en backend/springboot backend/src/main/java/com/venly/backend/service/impl/AuthServiceImpl.java -> consultando backend/springboot backend/src/main/java/com/venly/backend/config/OrganizationKeyProvider.java");
         String hash = organizationKeyProvider.getOrganizationKeyHash();
         if (hash == null || hash.isBlank()) {
             throw new BusinessException(HttpStatus.FORBIDDEN, "La clave de organización no está configurada");

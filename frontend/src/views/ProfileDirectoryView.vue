@@ -41,6 +41,7 @@ function countBy(role: Role | 'TODOS') {
 }
 
 async function load() {
+  console.log("[VENLY TRACE - FRONTEND] Acción: Solicitando listado de perfiles con restricción de Staff en frontend/src/views/ProfileDirectoryView.vue -> enviando petición a frontend/src/services/profileService.ts");
   loading.value = true;
   error.value = '';
   try {
@@ -53,6 +54,7 @@ async function load() {
 }
 
 async function openDetail(profile: Profile) {
+  console.log("[VENLY TRACE - FRONTEND] Acción: Solicitando detalle del perfil seleccionado en frontend/src/views/ProfileDirectoryView.vue -> enviando petición a frontend/src/services/profileService.ts");
   selected.value = profile;
   detailOpen.value = true;
   detailError.value = '';

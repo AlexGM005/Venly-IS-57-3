@@ -17,6 +17,7 @@ class RequesterResolver {
     }
 
     Profile require(Long requesterId) {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Resolviendo sesión simulada (header X-Perfil-Id) en backend/springboot backend/src/main/java/com/venly/backend/service/impl/RequesterResolver.java -> consultando repositorio backend/springboot backend/src/main/java/com/venly/backend/repository/JsonProfileRepository.java");
         if (requesterId == null) {
             throw new BusinessException(HttpStatus.UNAUTHORIZED, "Debe iniciar sesión para realizar esta acción");
         }
@@ -26,6 +27,7 @@ class RequesterResolver {
     }
 
     Profile requireStaff(Long requesterId, String forbiddenMessage) {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Verificando que el perfil tenga rol Staff (Gerente/Jefe) en backend/springboot backend/src/main/java/com/venly/backend/service/impl/RequesterResolver.java -> consultando backend/springboot backend/src/main/java/com/venly/backend/model/Role.java");
         Profile requester = require(requesterId);
         if (requester.getRol() == null || !requester.getRol().isStaff()) {
             throw new BusinessException(HttpStatus.FORBIDDEN, forbiddenMessage);

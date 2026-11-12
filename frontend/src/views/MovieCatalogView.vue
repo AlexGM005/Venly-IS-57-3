@@ -23,6 +23,7 @@ const filtered = computed(() => {
 });
 
 async function load() {
+  console.log("[VENLY TRACE - FRONTEND] Acción: Solicitando cartelera de películas en frontend/src/views/MovieCatalogView.vue -> enviando petición a frontend/src/services/movieService.ts");
   loading.value = true;
   error.value = '';
   try {

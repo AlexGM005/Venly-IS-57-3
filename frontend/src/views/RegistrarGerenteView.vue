@@ -63,6 +63,7 @@ function resetForm() {
 }
 
 async function submitRegister() {
+  console.log("[VENLY TRACE - FRONTEND] Acción: Capturando datos para creación de perfil Gerente (uso exclusivo del Jefe) en frontend/src/views/RegistrarGerenteView.vue -> enviando petición a frontend/src/services/authService.ts");
   registerError.value = '';
   createdManager.value = null;
 

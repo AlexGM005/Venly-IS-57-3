@@ -23,16 +23,19 @@ public class JsonProfileRepository implements ProfileRepository {
 
     @Override
     public Profile save(Profile profile) {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Insertando nuevo perfil (Cliente/Gerente/Jefe) desde backend/springboot backend/src/main/java/com/venly/backend/repository/JsonProfileRepository.java -> hacia base de datos data/Base.json");
         return dataStore.insert(COLLECTION_KEY, PROFILE_LIST_TYPE, profile, Profile::getId, Profile::setId);
     }
 
     @Override
     public Profile update(Profile profile) {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Actualizando perfil existente desde backend/springboot backend/src/main/java/com/venly/backend/repository/JsonProfileRepository.java -> hacia base de datos data/Base.json");
         return dataStore.replace(COLLECTION_KEY, PROFILE_LIST_TYPE, profile, Profile::getId);
     }
 
     @Override
     public Optional<Profile> findById(Long id) {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Obteniendo perfil por id desde backend/springboot backend/src/main/java/com/venly/backend/repository/JsonProfileRepository.java -> hacia base de datos data/Base.json");
         if (id == null) {
             return Optional.empty();
         }
@@ -41,18 +44,21 @@ public class JsonProfileRepository implements ProfileRepository {
 
     @Override
     public Optional<Profile> findByCorreo(String correo) {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Obteniendo perfil por correo (verificación de credenciales/duplicados) desde backend/springboot backend/src/main/java/com/venly/backend/repository/JsonProfileRepository.java -> hacia base de datos data/Base.json");
         String target = normalize(correo);
         return findAll().stream().filter(p -> normalize(p.getCorreo()).equals(target)).findFirst();
     }
 
     @Override
     public Optional<Profile> findByCedula(String cedula) {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Obteniendo perfil por cédula (verificación de duplicados) desde backend/springboot backend/src/main/java/com/venly/backend/repository/JsonProfileRepository.java -> hacia base de datos data/Base.json");
         String target = normalize(cedula);
         return findAll().stream().filter(p -> normalize(p.getCedula()).equals(target)).findFirst();
     }
 
     @Override
     public List<Profile> findAll() {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Obteniendo listado completo de perfiles desde backend/springboot backend/src/main/java/com/venly/backend/repository/JsonProfileRepository.java -> hacia base de datos data/Base.json");
         return dataStore.getCollection(COLLECTION_KEY, PROFILE_LIST_TYPE);
     }
 

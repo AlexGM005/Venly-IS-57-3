@@ -24,11 +24,13 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<ProfileResponse> register(@Valid @RequestBody CreateProfileRequest request) {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Recibiendo petición POST /api/auth/register en backend/springboot backend/src/main/java/com/venly/backend/controller/AuthController.java -> delegando a backend/springboot backend/src/main/java/com/venly/backend/service/impl/AuthServiceImpl.java");
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
     }
 
     @PostMapping("/login")
     public ResponseEntity<ProfileResponse> login(@Valid @RequestBody LoginRequest request) {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Recibiendo petición POST /api/auth/login en backend/springboot backend/src/main/java/com/venly/backend/controller/AuthController.java -> delegando a backend/springboot backend/src/main/java/com/venly/backend/service/impl/AuthServiceImpl.java");
         return ResponseEntity.ok(authService.login(request));
     }
 }

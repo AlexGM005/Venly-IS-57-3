@@ -39,6 +39,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public MovieResponse create(Long requesterId, CreateMovieRequest request) {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Verificando restricción de Staff (Gerente/Jefe) y creando película en backend/springboot backend/src/main/java/com/venly/backend/service/impl/MovieServiceImpl.java -> consultando repositorio backend/springboot backend/src/main/java/com/venly/backend/repository/JsonMovieRepository.java");
         requesterResolver.requireStaff(requesterId, FORBIDDEN_MESSAGE);
         Movie movie = new Movie();
         applyFields(movie, request);
@@ -50,6 +51,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public MovieResponse update(Long requesterId, Long movieId, UpdateMovieRequest request) {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Verificando restricción de Staff (Gerente/Jefe) y editando película en backend/springboot backend/src/main/java/com/venly/backend/service/impl/MovieServiceImpl.java -> consultando repositorio backend/springboot backend/src/main/java/com/venly/backend/repository/JsonMovieRepository.java");
         requesterResolver.requireStaff(requesterId, FORBIDDEN_MESSAGE);
         Movie movie = findMovie(movieId);
         applyFields(movie, request);
@@ -64,6 +66,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public List<MovieResponse> findAll(Long requesterId) {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Consultando cartelera completa de películas en backend/springboot backend/src/main/java/com/venly/backend/service/impl/MovieServiceImpl.java -> consultando repositorio backend/springboot backend/src/main/java/com/venly/backend/repository/JsonMovieRepository.java");
         validateOptionalRequester(requesterId);
         Map<Long, String> rooms = roomNames();
         return movieRepository.findAll().stream()
@@ -74,12 +77,14 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public MovieResponse findById(Long requesterId, Long movieId) {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Consultando película por id en backend/springboot backend/src/main/java/com/venly/backend/service/impl/MovieServiceImpl.java -> consultando repositorio backend/springboot backend/src/main/java/com/venly/backend/repository/JsonMovieRepository.java");
         validateOptionalRequester(requesterId);
         return toResponse(findMovie(movieId), roomNames());
     }
 
     @Override
     public List<Room> findRooms() {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Consultando listado de salas disponibles en backend/springboot backend/src/main/java/com/venly/backend/service/impl/MovieServiceImpl.java -> consultando repositorio backend/springboot backend/src/main/java/com/venly/backend/repository/JsonRoomRepository.java");
         return roomRepository.findAll().stream().sorted(Comparator.comparing(Room::getId)).toList();
     }
 

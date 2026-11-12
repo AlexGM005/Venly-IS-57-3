@@ -33,6 +33,7 @@ public class MovieController {
     @PostMapping
     public ResponseEntity<MovieResponse> create(@RequestHeader(SESSION_HEADER) Long requesterId,
                                                 @Valid @RequestBody CreateMovieRequest request) {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Recibiendo petición POST /api/peliculas (creación exclusiva Gerente/Jefe) en backend/springboot backend/src/main/java/com/venly/backend/controller/MovieController.java -> delegando a backend/springboot backend/src/main/java/com/venly/backend/service/impl/MovieServiceImpl.java");
         return ResponseEntity.status(HttpStatus.CREATED).body(movieService.create(requesterId, request));
     }
 
@@ -40,18 +41,21 @@ public class MovieController {
     public ResponseEntity<MovieResponse> update(@RequestHeader(SESSION_HEADER) Long requesterId,
                                                 @PathVariable Long id,
                                                 @Valid @RequestBody UpdateMovieRequest request) {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Recibiendo petición PUT /api/peliculas/{id} (edición exclusiva Gerente/Jefe) en backend/springboot backend/src/main/java/com/venly/backend/controller/MovieController.java -> delegando a backend/springboot backend/src/main/java/com/venly/backend/service/impl/MovieServiceImpl.java");
         return ResponseEntity.ok(movieService.update(requesterId, id, request));
     }
 
     @GetMapping
     public ResponseEntity<List<MovieResponse>> findAll(
             @RequestHeader(value = SESSION_HEADER, required = false) Long requesterId) {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Recibiendo petición GET /api/peliculas (consulta de cartelera) en backend/springboot backend/src/main/java/com/venly/backend/controller/MovieController.java -> delegando a backend/springboot backend/src/main/java/com/venly/backend/service/impl/MovieServiceImpl.java");
         return ResponseEntity.ok(movieService.findAll(requesterId));
     }
 
     /** Rooms available for the movie form selector. */
     @GetMapping("/salas")
     public ResponseEntity<List<Room>> findRooms() {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Recibiendo petición GET /api/peliculas/salas en backend/springboot backend/src/main/java/com/venly/backend/controller/MovieController.java -> delegando a backend/springboot backend/src/main/java/com/venly/backend/service/impl/MovieServiceImpl.java");
         return ResponseEntity.ok(movieService.findRooms());
     }
 
@@ -59,6 +63,7 @@ public class MovieController {
     public ResponseEntity<MovieResponse> findById(
             @RequestHeader(value = SESSION_HEADER, required = false) Long requesterId,
             @PathVariable Long id) {
+        System.out.println("[VENLY TRACE - BACKEND] Acción: Recibiendo petición GET /api/peliculas/{id} en backend/springboot backend/src/main/java/com/venly/backend/controller/MovieController.java -> delegando a backend/springboot backend/src/main/java/com/venly/backend/service/impl/MovieServiceImpl.java");
         return ResponseEntity.ok(movieService.findById(requesterId, id));
     }
 }
