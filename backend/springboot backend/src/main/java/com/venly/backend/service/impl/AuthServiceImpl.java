@@ -32,13 +32,15 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ProfileResponse register(CreateProfileRequest request) {
-        System.out.println("[VENLY TRACE - BACKEND] Acción: Validando duplicados (correo/cédula) y asignando rol y contraseña con hash BCrypt en backend/springboot backend/src/main/java/com/venly/backend/service/impl/AuthServiceImpl.java -> consultando repositorio backend/springboot backend/src/main/java/com/venly/backend/repository/JsonProfileRepository.java");
+        System.out.println("\n[VENLY TRACE - BACKEND] 🔵 Acción: Creación de perfil y asignación de contraseña\nDe: AuthServiceImpl.java -> Hacia: JsonProfileRepository.java");
         Role role = request.getRol() == null ? Role.CLIENTE : request.getRol();
 
         if (profileRepository.findByCorreo(request.getCorreo()).isPresent()) {
+            System.out.println("\n[VENLY TRACE - BACKEND] 🔴 Acción: Validación de correo duplicado\nDe: AuthServiceImpl.java\nEstado: 409 (Conflicto - El correo ya está registrado)");
             throw new BusinessException(HttpStatus.CONFLICT, "El correo ya está registrado");
         }
         if (profileRepository.findByCedula(request.getCedula()).isPresent()) {
+            System.out.println("\n[VENLY TRACE - BACKEND] 🔴 Acción: Validación de cédula duplicada\nDe: AuthServiceImpl.java\nEstado: 409 (Conflicto - La cédula ya está registrada)");
             throw new BusinessException(HttpStatus.CONFLICT, "La cédula ya está registrada");
         }
         if (role.isStaff()) {
@@ -53,32 +55,42 @@ public class AuthServiceImpl implements AuthService {
         profile.setRol(role);
         profile.setPasswordHash(passwordEncoder.encode(request.getContrasena()));
 
+        System.out.println("\n[VENLY TRACE - BACKEND] 🟢 Acción: Creación de perfil\nDe: AuthServiceImpl.java -> Hacia: JsonProfileRepository.java\nEstado: 201 (Creado - Perfil registrado con contraseña encriptada)");
         return ProfileMapper.toResponse(profileRepository.save(profile));
     }
 
     @Override
     public ProfileResponse login(LoginRequest request) {
-        System.out.println("[VENLY TRACE - BACKEND] Acción: Verificando credenciales y comparando hash BCrypt en backend/springboot backend/src/main/java/com/venly/backend/service/impl/AuthServiceImpl.java -> consultando repositorio backend/springboot backend/src/main/java/com/venly/backend/repository/JsonProfileRepository.java");
+        System.out.println("\n[VENLY TRACE - BACKEND] 🔵 Acción: Verificación de Hash BCrypt\nDe: AuthServiceImpl.java -> Hacia: JsonProfileRepository.java");
         Profile profile = profileRepository.findByCorreo(request.getCorreo())
-                .orElseThrow(() -> new BusinessException(HttpStatus.UNAUTHORIZED, INVALID_CREDENTIALS));
+                .orElseThrow(() -> {
+                    System.out.println("\n[VENLY TRACE - BACKEND] 🔴 Acción: Verificación de Hash BCrypt\nDe: AuthServiceImpl.java\nEstado: 401 (No Autorizado - Correo no registrado)");
+                    return new BusinessException(HttpStatus.UNAUTHORIZED, INVALID_CREDENTIALS);
+                });
         if (profile.getPasswordHash() == null
                 || !passwordEncoder.matches(request.getContrasena(), profile.getPasswordHash())) {
+            System.out.println("\n[VENLY TRACE - BACKEND] 🔴 Acción: Verificación de Hash BCrypt\nDe: AuthServiceImpl.java\nEstado: 401 (No Autorizado - Contraseña incorrecta)");
             throw new BusinessException(HttpStatus.UNAUTHORIZED, INVALID_CREDENTIALS);
         }
+        System.out.println("\n[VENLY TRACE - BACKEND] 🟢 Acción: Verificación de Hash BCrypt\nDe: AuthServiceImpl.java -> Hacia: JsonProfileRepository.java\nEstado: 200 (Éxito - Contraseña validada)");
         return ProfileMapper.toResponse(profile);
     }
 
     private void validateOrganizationKey(String organizationKey) {
-        System.out.println("[VENLY TRACE - BACKEND] Acción: Validando clave de organización para creación de perfil Staff (Gerente/Jefe) en backend/springboot backend/src/main/java/com/venly/backend/service/impl/AuthServiceImpl.java -> consultando backend/springboot backend/src/main/java/com/venly/backend/config/OrganizationKeyProvider.java");
+        System.out.println("\n[VENLY TRACE - BACKEND] 🔵 Acción: Validación de clave de organización (rol Staff)\nDe: AuthServiceImpl.java -> Hacia: OrganizationKeyProvider.java");
         String hash = organizationKeyProvider.getOrganizationKeyHash();
         if (hash == null || hash.isBlank()) {
+            System.out.println("\n[VENLY TRACE - BACKEND] 🔴 Acción: Validación de clave de organización\nDe: AuthServiceImpl.java\nEstado: 403 (Prohibido - Clave de organización no configurada)");
             throw new BusinessException(HttpStatus.FORBIDDEN, "La clave de organización no está configurada");
         }
         if (organizationKey == null || organizationKey.isBlank()) {
+            System.out.println("\n[VENLY TRACE - BACKEND] 🔴 Acción: Validación de clave de organización\nDe: AuthServiceImpl.java\nEstado: 400 (Solicitud Incorrecta - Falta la clave de organización)");
             throw new BusinessException(HttpStatus.BAD_REQUEST, "Debe indicar la clave de organización para este rol");
         }
         if (!passwordEncoder.matches(organizationKey.trim(), hash)) {
+            System.out.println("\n[VENLY TRACE - BACKEND] 🔴 Acción: Validación de clave de organización\nDe: AuthServiceImpl.java\nEstado: 403 (Prohibido - Clave de organización inválida)");
             throw new BusinessException(HttpStatus.FORBIDDEN, "La clave de organización es inválida");
         }
+        System.out.println("\n[VENLY TRACE - BACKEND] 🟢 Acción: Validación de clave de organización\nDe: AuthServiceImpl.java\nEstado: 200 (Éxito - Clave de organización válida)");
     }
 }

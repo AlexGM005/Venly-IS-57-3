@@ -23,7 +23,7 @@ const errors = ref<Partial<Record<Field, string>>>({});
 
 // Refresh the stored session with the latest data from the server.
 onMounted(async () => {
-  console.log("[VENLY TRACE - FRONTEND] Acción: Solicitando datos actualizados de perfil propio en frontend/src/views/MyProfileView.vue -> enviando petición a frontend/src/services/profileService.ts");
+  console.log("\n[VENLY TRACE - FRONTEND] 🔵 Acción: Actualización de datos de perfil propio\nDe: MyProfileView.vue -> Hacia: profileService.ts");
   try {
     setSession(await getMyProfile());
   } catch (error) {
@@ -44,7 +44,7 @@ function openEdit() {
 }
 
 async function save() {
-  console.log("[VENLY TRACE - FRONTEND] Acción: Guardando edición de perfil propio en frontend/src/views/MyProfileView.vue -> enviando petición a frontend/src/services/profileService.ts");
+  console.log("\n[VENLY TRACE - FRONTEND] 🔵 Acción: Guardado de edición de perfil propio\nDe: MyProfileView.vue -> Hacia: profileService.ts");
   saveError.value = '';
   errors.value = compactErrors({
     nombre: validateName(form.nombre),

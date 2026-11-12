@@ -23,19 +23,19 @@ public class JsonMovieRepository implements MovieRepository {
 
     @Override
     public Movie save(Movie movie) {
-        System.out.println("[VENLY TRACE - BACKEND] Acción: Insertando nueva película desde backend/springboot backend/src/main/java/com/venly/backend/repository/JsonMovieRepository.java -> hacia base de datos data/Base.json");
+        System.out.println("\n[VENLY TRACE - BACKEND] 🔵 Acción: Inserción de nueva película\nDe: JsonMovieRepository.java -> Hacia: data/Base.json");
         return dataStore.insert(COLLECTION_KEY, MOVIE_LIST_TYPE, movie, Movie::getId, Movie::setId);
     }
 
     @Override
     public Movie update(Movie movie) {
-        System.out.println("[VENLY TRACE - BACKEND] Acción: Actualizando película existente desde backend/springboot backend/src/main/java/com/venly/backend/repository/JsonMovieRepository.java -> hacia base de datos data/Base.json");
+        System.out.println("\n[VENLY TRACE - BACKEND] 🔵 Acción: Actualización de película existente\nDe: JsonMovieRepository.java -> Hacia: data/Base.json");
         return dataStore.replace(COLLECTION_KEY, MOVIE_LIST_TYPE, movie, Movie::getId);
     }
 
     @Override
     public Optional<Movie> findById(Long id) {
-        System.out.println("[VENLY TRACE - BACKEND] Acción: Obteniendo película por id desde backend/springboot backend/src/main/java/com/venly/backend/repository/JsonMovieRepository.java -> hacia base de datos data/Base.json");
+        System.out.println("\n[VENLY TRACE - BACKEND] 🔵 Acción: Consulta de película por id\nDe: JsonMovieRepository.java -> Hacia: data/Base.json");
         if (id == null) {
             return Optional.empty();
         }
@@ -44,7 +44,7 @@ public class JsonMovieRepository implements MovieRepository {
 
     @Override
     public List<Movie> findAll() {
-        System.out.println("[VENLY TRACE - BACKEND] Acción: Obteniendo listado completo de películas desde backend/springboot backend/src/main/java/com/venly/backend/repository/JsonMovieRepository.java -> hacia base de datos data/Base.json");
+        System.out.println("\n[VENLY TRACE - BACKEND] 🔵 Acción: Listado completo de películas\nDe: JsonMovieRepository.java -> Hacia: data/Base.json");
         return dataStore.getCollection(COLLECTION_KEY, MOVIE_LIST_TYPE);
     }
 }

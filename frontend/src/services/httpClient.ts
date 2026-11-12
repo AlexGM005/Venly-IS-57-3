@@ -38,7 +38,7 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     : path.startsWith('/perfiles')
       ? 'ProfileController.java'
       : 'MovieController.java';
-  console.log(`[VENLY TRACE - FRONTEND] Acción: Procesando petición ${method} ${path} en frontend/src/services/httpClient.ts -> dirigiendo a backend/springboot backend/src/main/java/com/venly/backend/controller/${destinoControlador}`);
+  console.log(`\n[VENLY TRACE - FRONTEND] 🔵 Acción: Petición ${method} ${path}\nDe: httpClient.ts -> Hacia: ${destinoControlador}`);
   const headers: Record<string, string> = { Accept: 'application/json' };
   if (body !== undefined) headers['Content-Type'] = 'application/json';
 

@@ -68,7 +68,7 @@ public class JsonDataStore {
 
     /** Returns a mutable copy of the collection stored under {@code key} (empty list if absent). */
     public <T> List<T> getCollection(String key, TypeReference<List<T>> type) {
-        System.out.println("[VENLY TRACE - BACKEND] Acción: Leyendo colección '" + key + "' desde backend/springboot backend/src/main/java/com/venly/backend/repository/JsonDataStore.java -> hacia base de datos data/Base.json");
+        System.out.println("\n[VENLY TRACE - BACKEND] 🔵 Acción: Lectura de la colección '" + key + "'\nDe: JsonDataStore.java -> Hacia: data/Base.json");
         lock.lock();
         try {
             return readCollection(readRoot(), key, type);
@@ -81,7 +81,7 @@ public class JsonDataStore {
 
     /** Replaces the collection stored under {@code key}, preserving the rest of the file. */
     public <T> void saveCollection(String key, List<T> data) {
-        System.out.println("[VENLY TRACE - BACKEND] Acción: Guardando colección '" + key + "' desde backend/springboot backend/src/main/java/com/venly/backend/repository/JsonDataStore.java -> hacia base de datos data/Base.json");
+        System.out.println("\n[VENLY TRACE - BACKEND] 🔵 Acción: Escritura de la colección '" + key + "'\nDe: JsonDataStore.java -> Hacia: data/Base.json");
         lock.lock();
         try {
             ObjectNode root = readRoot();
@@ -99,7 +99,7 @@ public class JsonDataStore {
      * so concurrent callers cannot interleave (e.g. when generating IDs).
      */
     public <T, R> R updateCollection(String key, TypeReference<List<T>> type, Function<List<T>, R> operation) {
-        System.out.println("[VENLY TRACE - BACKEND] Acción: Actualizando de forma atómica la colección '" + key + "' desde backend/springboot backend/src/main/java/com/venly/backend/repository/JsonDataStore.java -> hacia base de datos data/Base.json");
+        System.out.println("\n[VENLY TRACE - BACKEND] 🔵 Acción: Actualización atómica de la colección '" + key + "'\nDe: JsonDataStore.java -> Hacia: data/Base.json");
         lock.lock();
         try {
             ObjectNode root = readRoot();

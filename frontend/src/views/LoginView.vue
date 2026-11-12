@@ -86,7 +86,7 @@ function enterApp(profile: Profile) {
 }
 
 async function submitLogin() {
-  console.log("[VENLY TRACE - FRONTEND] Acción: Capturando credenciales de usuario para inicio de sesión en frontend/src/views/LoginView.vue -> enviando petición a frontend/src/services/authService.ts");
+  console.log("\n[VENLY TRACE - FRONTEND] 🔵 Acción: Captura y envío de credenciales\nDe: LoginView.vue -> Hacia: authService.ts");
   loginError.value = '';
   loginErrors.value = compactErrors({
     correo: validateEmail(loginForm.correo),
@@ -107,7 +107,7 @@ async function submitLogin() {
 }
 
 async function submitRegister() {
-  console.log("[VENLY TRACE - FRONTEND] Acción: Capturando datos de registro de nuevo perfil (Cliente o Staff) en frontend/src/views/LoginView.vue -> enviando petición a frontend/src/services/authService.ts");
+  console.log("\n[VENLY TRACE - FRONTEND] 🔵 Acción: Registro de nuevo perfil (Cliente/Staff)\nDe: LoginView.vue -> Hacia: authService.ts");
   registerError.value = '';
   registerErrors.value = compactErrors({
     nombre: validateName(registerForm.nombre),

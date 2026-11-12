@@ -192,7 +192,7 @@ function validate(): boolean {
 }
 
 async function submit() {
-  console.log("[VENLY TRACE - FRONTEND] Acción: Enviando formulario de creación/edición de película (exclusivo Gerente/Jefe) en frontend/src/views/MovieFormView.vue -> enviando petición a frontend/src/services/movieService.ts");
+  console.log("\n[VENLY TRACE - FRONTEND] 🔵 Acción: Envío de formulario de película (Gerente/Jefe)\nDe: MovieFormView.vue -> Hacia: movieService.ts");
   globalError.value = '';
   successMessage.value = '';
   if (!validate()) return;

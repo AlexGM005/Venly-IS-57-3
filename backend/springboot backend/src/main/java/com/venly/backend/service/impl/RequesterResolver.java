@@ -17,21 +17,27 @@ class RequesterResolver {
     }
 
     Profile require(Long requesterId) {
-        System.out.println("[VENLY TRACE - BACKEND] Acción: Resolviendo sesión simulada (header X-Perfil-Id) en backend/springboot backend/src/main/java/com/venly/backend/service/impl/RequesterResolver.java -> consultando repositorio backend/springboot backend/src/main/java/com/venly/backend/repository/JsonProfileRepository.java");
+        System.out.println("\n[VENLY TRACE - BACKEND] 🔵 Acción: Resolución de sesión simulada (X-Perfil-Id)\nDe: RequesterResolver.java -> Hacia: JsonProfileRepository.java");
         if (requesterId == null) {
+            System.out.println("\n[VENLY TRACE - BACKEND] 🔴 Acción: Resolución de sesión simulada\nDe: RequesterResolver.java\nEstado: 401 (No Autorizado - No hay sesión activa)");
             throw new BusinessException(HttpStatus.UNAUTHORIZED, "Debe iniciar sesión para realizar esta acción");
         }
         return profileRepository.findById(requesterId)
-                .orElseThrow(() -> new BusinessException(HttpStatus.UNAUTHORIZED,
-                        "La sesión no corresponde a un perfil existente"));
+                .orElseThrow(() -> {
+                    System.out.println("\n[VENLY TRACE - BACKEND] 🔴 Acción: Resolución de sesión simulada\nDe: RequesterResolver.java\nEstado: 401 (No Autorizado - El perfil de la sesión no existe)");
+                    return new BusinessException(HttpStatus.UNAUTHORIZED,
+                        "La sesión no corresponde a un perfil existente");
+                });
     }
 
     Profile requireStaff(Long requesterId, String forbiddenMessage) {
-        System.out.println("[VENLY TRACE - BACKEND] Acción: Verificando que el perfil tenga rol Staff (Gerente/Jefe) en backend/springboot backend/src/main/java/com/venly/backend/service/impl/RequesterResolver.java -> consultando backend/springboot backend/src/main/java/com/venly/backend/model/Role.java");
+        System.out.println("\n[VENLY TRACE - BACKEND] 🔵 Acción: Verificación de rol Staff (Gerente/Jefe)\nDe: RequesterResolver.java -> Hacia: Role.java");
         Profile requester = require(requesterId);
         if (requester.getRol() == null || !requester.getRol().isStaff()) {
+            System.out.println("\n[VENLY TRACE - BACKEND] 🔴 Acción: Verificación de rol Staff\nDe: RequesterResolver.java\nEstado: 403 (Prohibido - Rol sin permisos)");
             throw new BusinessException(HttpStatus.FORBIDDEN, forbiddenMessage);
         }
+        System.out.println("\n[VENLY TRACE - BACKEND] 🟢 Acción: Verificación de rol Staff\nDe: RequesterResolver.java\nEstado: 200 (Éxito - Rol autorizado)");
         return requester;
     }
 }
