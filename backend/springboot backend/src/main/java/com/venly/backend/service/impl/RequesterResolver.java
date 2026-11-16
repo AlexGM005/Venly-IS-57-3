@@ -17,14 +17,14 @@ class RequesterResolver {
     }
 
     Profile require(Long requesterId) {
-        System.out.println("\n[VENLY TRACE - BACKEND] 🔵 Acción: Resolución de sesión simulada (X-Perfil-Id)\nDe: RequesterResolver.java -> Hacia: JsonProfileRepository.java");
+        System.out.println("\n[VENLY TRACE - BACKEND] 🔵 Acción: Resolución de sesión (X-Perfil-Id)\nDe: RequesterResolver.java -> Hacia: JsonProfileRepository.java");
         if (requesterId == null) {
-            System.out.println("\n[VENLY TRACE - BACKEND] 🔴 Acción: Resolución de sesión simulada\nDe: RequesterResolver.java\nEstado: 401 (No Autorizado - No hay sesión activa)");
+            System.out.println("\n[VENLY TRACE - BACKEND] 🔴 Acción: Resolución de sesión\nDe: RequesterResolver.java\nEstado: 401 (No Autorizado - No hay sesión activa)");
             throw new BusinessException(HttpStatus.UNAUTHORIZED, "Debe iniciar sesión para realizar esta acción");
         }
         return profileRepository.findById(requesterId)
                 .orElseThrow(() -> {
-                    System.out.println("\n[VENLY TRACE - BACKEND] 🔴 Acción: Resolución de sesión simulada\nDe: RequesterResolver.java\nEstado: 401 (No Autorizado - El perfil de la sesión no existe)");
+                    System.out.println("\n[VENLY TRACE - BACKEND] 🔴 Acción: Resolución de sesión\nDe: RequesterResolver.java\nEstado: 401 (No Autorizado - El perfil de la sesión no existe)");
                     return new BusinessException(HttpStatus.UNAUTHORIZED,
                         "La sesión no corresponde a un perfil existente");
                 });

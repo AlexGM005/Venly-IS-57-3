@@ -84,6 +84,33 @@ const router = createRouter({
       props: (route) => ({ id: Number(route.params.id) }),
       meta: { staffOnly: true, title: 'Editar película' }
     },
+    {
+      path: '/peliculas/:id(\\d+)/asientos',
+      name: 'seleccion-asientos',
+      component: () => import('@/views/SeatSelectionView.vue'),
+      props: (route) => ({ id: Number(route.params.id) }),
+      meta: { title: 'Selección de asientos' }
+    },
+    {
+      path: '/peliculas/:id(\\d+)/pago',
+      name: 'pago',
+      component: () => import('@/views/PaymentView.vue'),
+      props: (route) => ({ id: Number(route.params.id) }),
+      meta: { title: 'Pago simulado' }
+    },
+    {
+      path: '/reservas',
+      name: 'reservas',
+      component: () => import('@/views/ReservationListView.vue'),
+      meta: { title: 'Reservas' }
+    },
+    {
+      path: '/reservas/:id(\\d+)',
+      name: 'reserva-detalle',
+      component: () => import('@/views/ReservationDetailView.vue'),
+      props: (route) => ({ id: Number(route.params.id) }),
+      meta: { title: 'Comprobante de reserva' }
+    },
     { path: '/:pathMatch(.*)*', redirect: '/menu' }
   ]
 });

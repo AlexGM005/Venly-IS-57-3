@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { useSession } from '@/composables/useSession';
 import { parseApiError } from '@/services/httpClient';
@@ -7,12 +8,19 @@ import { getMovie, movieImageSrc } from '@/services/movieService';
 import type { Movie } from '@/types/movie';
 
 const props = defineProps<{ id: number }>();
+const router = useRouter();
 const { isStaff } = useSession();
 
 const movie = ref<Movie | null>(null);
 const loading = ref(true);
 const error = ref('');
 const imageSrc = computed(() => (movie.value ? movieImageSrc(movie.value) : null));
+
+function goToSeats() {
+  console.log("\n[VENLY TRACE - FRONTEND] 🔵 Acción: Ir a la selección de asientos\nDe: MovieDetailView.vue -> Hacia: SeatSelectionView.vue");
+  if (!movie.value) return;
+  router.push({ name: 'seleccion-asientos', params: { id: movie.value.id } });
+}
 
 onMounted(async () => {
   console.log("\n[VENLY TRACE - FRONTEND] 🔵 Acción: Solicitud de detalle de película\nDe: MovieDetailView.vue -> Hacia: movieService.ts");
@@ -65,6 +73,11 @@ onMounted(async () => {
 
         <h2 class="mt-8 text-sm font-semibold uppercase tracking-wider text-venly-gold">Sinopsis</h2>
         <p class="mt-2 whitespace-pre-line leading-relaxed text-gray-300">{{ movie.sinopsis }}</p>
+
+        <div class="mt-auto pt-8">
+          <button v-if="!isStaff" type="button" class="venly-btn-primary" @click="goToSeats">🎟️ Comprar entradas</button>
+          <button v-else type="button" class="venly-btn-secondary" @click="goToSeats">Consultar asientos</button>
+        </div>
 
         <!-- <div v-if="isStaff" class="mt-auto pt-8">
           <RouterLink :to="{ name: 'pelicula-editar', params: { id: movie.id } }" class="venly-btn-primary">✏️ Editar película</RouterLink>

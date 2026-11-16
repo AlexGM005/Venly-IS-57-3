@@ -69,7 +69,7 @@ venly/
 
 Si `Salas` está vacío al arrancar, el backend crea las 5 salas por defecto.
 
-## 4) Sesión simulada
+## 4) Sesión
 
 - No hay JWT. Un login o registro correcto devuelve el perfil completo, sin el hash de contraseña.
 - El frontend guarda el perfil en `localStorage` (`venly.session`) y envía la cabecera **`X-Perfil-Id`** en cada petición.

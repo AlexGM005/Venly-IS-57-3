@@ -36,6 +36,7 @@ export function useSession() {
   }
 
   function logout() {
+    console.log("\n[VENLY TRACE - FRONTEND] 🔴 Acción: Limpieza de sesión local (localStorage)\nDe: useSession.ts -> Hacia: localStorage\nEstado: 200 (Éxito - Sesión cerrada correctamente)");
     currentUser.value = null;
     localStorage.removeItem(STORAGE_KEY);
   }

@@ -15,16 +15,19 @@ const links = computed(() => {
         { to: '/menu', label: 'Menú' },
         { to: '/perfiles', label: 'Gestión de perfiles' },
         { to: '/peliculas', label: 'Gestión de películas' },
+        { to: '/reservas', label: 'Reservas' },
         { to: '/perfil', label: 'Mi perfil' }
       ]
     : [
         { to: '/menu', label: 'Menú' },
         { to: '/peliculas', label: 'Cartelera' },
+        { to: '/reservas', label: 'Mis reservas' },
         { to: '/perfil', label: 'Mi perfil' }
       ];
 });
 
 function handleLogout() {
+  console.log("\n[VENLY TRACE - FRONTEND] 🔴 Acción: Cierre de sesión de usuario\nDe: Navbar.vue -> Hacia: useSession.ts");
   menuOpen.value = false;
   logout();
   router.push({ name: 'login' });

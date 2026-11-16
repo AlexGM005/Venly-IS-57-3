@@ -37,7 +37,11 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     ? 'AuthController.java'
     : path.startsWith('/perfiles')
       ? 'ProfileController.java'
-      : 'MovieController.java';
+      : path.startsWith('/funciones')
+        ? 'SeatController.java'
+        : path.startsWith('/reservas')
+          ? 'ReservationController.java'
+          : 'MovieController.java';
   console.log(`\n[VENLY TRACE - FRONTEND] 🔵 Acción: Petición ${method} ${path}\nDe: httpClient.ts -> Hacia: ${destinoControlador}`);
   const headers: Record<string, string> = { Accept: 'application/json' };
   if (body !== undefined) headers['Content-Type'] = 'application/json';
