@@ -1,10 +1,9 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { useSession } from '@/composables/useSession';
-import { register } from '@/services/authService';
-import { parseApiError } from '@/services/httpClient';
+import { register, parseApiError } from '@/services/venlyService';
 import type { Profile, RegisterPayload } from '@/types/profile';
 import {
   compactErrors,

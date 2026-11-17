@@ -68,6 +68,14 @@
     "telefono" : "04841566576",
     "passwordHash" : "$2a$10$gIuGCHGcxZJWh2xfqF6ka.CG1hpFeIeUW70lytKEAUZgigHFufKTy",
     "rol" : "GERENTE"
+  }, {
+    "id" : 7,
+    "nombre" : "Sofia Gonzalez",
+    "cedula" : "32121851",
+    "correo" : "sofiadanielagonzalez@gmail.com",
+    "telefono" : "04126035838",
+    "passwordHash" : "$2a$10$c1LZOu9D.fkOmvIUKWXU/e9acn7F5ti6mRkke7u.g0zFzzG0Mediy",
+    "rol" : "CLIENTE"
   } ],
   "Peliculas" : [ {
     "id" : 1,
@@ -96,5 +104,21 @@
     "tarjetaUltimos4" : "4242",
     "estado" : "CONFIRMADA",
     "fechaCreacion" : "2026-11-16T12:56:21.390852800"
+  }, {
+    "id" : 2,
+    "codigo" : "VEN-BBQ92AHD",
+    "perfilId" : 7,
+    "peliculaId" : 1,
+    "peliculaTitulo" : "Spiderman Brand New Day",
+    "salaNombre" : "Sala 1",
+    "horario" : "10:00 - 00:25",
+    "asientos" : [ "F7", "F6", "F5", "F4" ],
+    "cantidad" : 4,
+    "precioUnitario" : 8.0,
+    "total" : 32.0,
+    "metodoPago" : "TARJETA_SIMULADA",
+    "tarjetaUltimos4" : "4242",
+    "estado" : "CONFIRMADA",
+    "fechaCreacion" : "2026-11-16T20:37:59.983991400"
   } ]
 }

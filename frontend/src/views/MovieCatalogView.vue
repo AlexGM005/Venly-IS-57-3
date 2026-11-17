@@ -1,11 +1,10 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import MovieCard from '@/components/MovieCard.vue';
 import { useSession } from '@/composables/useSession';
-import { parseApiError } from '@/services/httpClient';
-import { getMovies } from '@/services/movieService';
+import { parseApiError, getMovies } from '@/services/venlyService';
 import type { Movie } from '@/types/movie';
 import { normalizeText } from '@/utils/validators';
 

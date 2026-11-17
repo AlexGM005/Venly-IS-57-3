@@ -1,8 +1,7 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
-import { parseApiError } from '@/services/httpClient';
-import { getReservation } from '@/services/reservationService';
+import { parseApiError, getReservation } from '@/services/venlyService';
 import type { Reservation } from '@/types/reservation';
 
 const props = defineProps<{ id: number }>();

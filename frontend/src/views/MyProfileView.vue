@@ -1,11 +1,10 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue';
 import BaseModal from '@/components/BaseModal.vue';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import ProfileCard from '@/components/ProfileCard.vue';
 import { useSession } from '@/composables/useSession';
-import { parseApiError } from '@/services/httpClient';
-import { getMyProfile, updateMyProfile } from '@/services/profileService';
+import { parseApiError, getMyProfile, updateMyProfile } from '@/services/venlyService';
 import type { UpdateProfilePayload } from '@/types/profile';
 import { compactErrors, validateEmail, validateName, validatePhone } from '@/utils/validators';
 

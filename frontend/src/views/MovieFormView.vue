@@ -1,16 +1,7 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
-import { parseApiError } from '@/services/httpClient';
-import {
-  ALLOWED_IMAGE_TYPES,
-  MAX_IMAGE_BYTES,
-  createMovie,
-  getMovie,
-  getRooms,
-  movieImageSrc,
-  updateMovie
-} from '@/services/movieService';
+import { parseApiError, ALLOWED_IMAGE_TYPES, MAX_IMAGE_BYTES, createMovie, getMovie, getRooms, movieImageSrc, updateMovie } from '@/services/venlyService';
 import type { Clasificacion, ImageType, Movie, MoviePayload, Room } from '@/types/movie';
 
 const props = defineProps<{ id?: number }>();

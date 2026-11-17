@@ -1,7 +1,7 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { createProfile } from '@/services/profileService';
+import { register } from '@/services/venlyService';
 
 const router = useRouter();
 
@@ -18,12 +18,12 @@ const handleCreateProfile = async () => {
     loading.value = true;
     errorMessage.value = '';
 
-    await createProfile({
+    await register({
       nombre: nombre.value,
       cedula: cedula.value,
       telefono: telefono.value,
       correo: correo.value,
-      password: password.value,
+      contrasena: password.value,
       rol: 'CLIENTE'
     });
 

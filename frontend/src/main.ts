@@ -1,9 +1,9 @@
-import './assets/main.css';
+﻿import './assets/main.css';
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
 import { useSession } from '@/composables/useSession';
-import { onSessionRejected } from '@/services/httpClient';
+import { onSessionRejected } from '@/services/venlyService';
 
 // If the backend no longer recognises the stored profile, close the simulated session.
 onSessionRejected(() => {

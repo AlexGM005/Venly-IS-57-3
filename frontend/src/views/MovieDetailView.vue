@@ -1,10 +1,9 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { useSession } from '@/composables/useSession';
-import { parseApiError } from '@/services/httpClient';
-import { getMovie, movieImageSrc } from '@/services/movieService';
+import { parseApiError, getMovie, movieImageSrc } from '@/services/venlyService';
 import type { Movie } from '@/types/movie';
 
 const props = defineProps<{ id: number }>();

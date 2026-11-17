@@ -1,6 +1,6 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed } from 'vue';
-import { movieImageSrc } from '@/services/movieService';
+import { movieImageSrc } from '@/services/venlyService';
 import type { Movie } from '@/types/movie';
 
 const props = defineProps<{ movie: Movie; editable?: boolean }>();

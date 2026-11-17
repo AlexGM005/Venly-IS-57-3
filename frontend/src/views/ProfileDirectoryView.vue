@@ -1,11 +1,10 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import BaseModal from '@/components/BaseModal.vue';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import ProfileCard from '@/components/ProfileCard.vue';
 import RoleBadge from '@/components/RoleBadge.vue';
-import { parseApiError } from '@/services/httpClient';
-import { getAllProfiles, getProfileById } from '@/services/profileService';
+import { parseApiError, getAllProfiles, getProfileById } from '@/services/venlyService';
 import type { Profile, Role } from '@/types/profile';
 import { normalizeText } from '@/utils/validators';
 

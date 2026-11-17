@@ -1,9 +1,8 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { useSession } from '@/composables/useSession';
-import { parseApiError } from '@/services/httpClient';
-import { listReservations } from '@/services/reservationService';
+import { parseApiError, listReservations } from '@/services/venlyService';
 import type { Reservation } from '@/types/reservation';
 
 const { isStaff } = useSession();

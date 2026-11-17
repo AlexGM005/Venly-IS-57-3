@@ -1,11 +1,10 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { useBooking } from '@/composables/useBooking';
 import { useSession } from '@/composables/useSession';
-import { parseApiError } from '@/services/httpClient';
-import { getSeatMap } from '@/services/seatService';
+import { parseApiError, getSeatMap } from '@/services/venlyService';
 import type { Seat, SeatMap } from '@/types/reservation';
 
 const props = defineProps<{ id: number }>();
