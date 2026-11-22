@@ -35,6 +35,7 @@ export function validatePassword(value: string): string | undefined {
 /** Removes undefined entries so the result can be used directly as an error map. */
 export function compactErrors<K extends string>(errors: Record<K, string | undefined>): Partial<Record<K, string>> {
   return Object.fromEntries(Object.entries(errors).filter(([, v]) => v)) as Partial<Record<K, string>>;
+
 }
 
 /** Lower-cases and strips accents for accent-insensitive searches. */

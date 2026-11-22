@@ -33,18 +33,11 @@ public class ProfileServiceImpl implements ProfileService {
     public ProfileResponse updateMe(Long requesterId, UpdateProfileRequest request) {
         System.out.println("\n[VENLY TRACE - BACKEND] 🔵 Acción: Actualización de perfil propio\nDe: ProfileServiceImpl.java -> Hacia: JsonProfileRepository.java");
         Profile profile = requesterResolver.require(requesterId);
-        String newEmail = request.getCorreo().trim().toLowerCase();
-
-        profileRepository.findByCorreo(newEmail)
-                .filter(other -> !Objects.equals(other.getId(), profile.getId()))
-                .ifPresent(other -> {
-                    System.out.println("\n[VENLY TRACE - BACKEND] 🔴 Acción: Validación de correo duplicado\nDe: ProfileServiceImpl.java\nEstado: 409 (Conflicto - El correo ya está en uso)");
-                    throw new BusinessException(HttpStatus.CONFLICT, "El correo ya está en uso por otro perfil");
-                });
-
         profile.setNombre(ProfileMapper.normalizeName(request.getNombre()));
-        profile.setCorreo(newEmail);
+        profile.setCorreo(request.getCorreo().trim().toLowerCase());
         profile.setTelefono(request.getTelefono().trim());
+        // La verificación de correo duplicado (excluyendo el propio perfil) se
+        // realiza de forma atómica dentro de JsonProfileRepository.update().
         return ProfileMapper.toResponse(profileRepository.update(profile));
     }
 

@@ -35,14 +35,6 @@ public class AuthServiceImpl implements AuthService {
         System.out.println("\n[VENLY TRACE - BACKEND] 🔵 Acción: Creación de perfil y asignación de contraseña\nDe: AuthServiceImpl.java -> Hacia: JsonProfileRepository.java");
         Role role = request.getRol() == null ? Role.CLIENTE : request.getRol();
 
-        if (profileRepository.findByCorreo(request.getCorreo()).isPresent()) {
-            System.out.println("\n[VENLY TRACE - BACKEND] 🔴 Acción: Validación de correo duplicado\nDe: AuthServiceImpl.java\nEstado: 409 (Conflicto - El correo ya está registrado)");
-            throw new BusinessException(HttpStatus.CONFLICT, "El correo ya está registrado");
-        }
-        if (profileRepository.findByCedula(request.getCedula()).isPresent()) {
-            System.out.println("\n[VENLY TRACE - BACKEND] 🔴 Acción: Validación de cédula duplicada\nDe: AuthServiceImpl.java\nEstado: 409 (Conflicto - La cédula ya está registrada)");
-            throw new BusinessException(HttpStatus.CONFLICT, "La cédula ya está registrada");
-        }
         if (role.isStaff()) {
             validateOrganizationKey(request.getClaveOrganizacion());
         }
@@ -55,6 +47,8 @@ public class AuthServiceImpl implements AuthService {
         profile.setRol(role);
         profile.setPasswordHash(passwordEncoder.encode(request.getContrasena()));
 
+        // La verificación de duplicados (correo y cédula) se realiza de forma
+        // atómica dentro de JsonProfileRepository.save(), junto con el guardado.
         System.out.println("\n[VENLY TRACE - BACKEND] 🟢 Acción: Creación de perfil\nDe: AuthServiceImpl.java -> Hacia: JsonProfileRepository.java\nEstado: 201 (Creado - Perfil registrado con contraseña encriptada)");
         return ProfileMapper.toResponse(profileRepository.save(profile));
     }

@@ -76,6 +76,14 @@
     "telefono" : "04126035838",
     "passwordHash" : "$2a$10$c1LZOu9D.fkOmvIUKWXU/e9acn7F5ti6mRkke7u.g0zFzzG0Mediy",
     "rol" : "CLIENTE"
+  }, {
+    "id" : 8,
+    "nombre" : "Maria Victoria González Castro",
+    "cedula" : "30793705",
+    "correo" : "notmariavictoria@gmail.com",
+    "telefono" : "04126035782",
+    "passwordHash" : "$2a$10$xHJSu4sXbzO6Pg1j1vNmIewwjhv6yKSK7vI5r5kTF9Jm4Cm..3hse",
+    "rol" : "CLIENTE"
   } ],
   "Peliculas" : [ {
     "id" : 1,
@@ -120,5 +128,21 @@
     "tarjetaUltimos4" : "4242",
     "estado" : "CONFIRMADA",
     "fechaCreacion" : "2026-11-16T20:37:59.983991400"
+  }, {
+    "id" : 3,
+    "codigo" : "VEN-2T7X0DS6",
+    "perfilId" : 8,
+    "peliculaId" : 1,
+    "peliculaTitulo" : "Spiderman Brand New Day",
+    "salaNombre" : "Sala 1",
+    "horario" : "10:00 - 00:25",
+    "asientos" : [ "A5" ],
+    "cantidad" : 1,
+    "precioUnitario" : 8.0,
+    "total" : 8.0,
+    "metodoPago" : "TARJETA_SIMULADA",
+    "tarjetaUltimos4" : "4242",
+    "estado" : "CONFIRMADA",
+    "fechaCreacion" : "2026-11-22T19:52:14.389745400"
   } ]
 }
